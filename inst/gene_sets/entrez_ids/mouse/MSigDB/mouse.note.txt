@@ -1,0 +1,16 @@
+Mouse gene sets were downloaded from http://bioinf.wehi.edu.au/software/MSigDB/
+on 20160809:
+
+   h: hallmark gene sets               (  50 total)
+  c2: curated gene sets                (4726 total)
+  c3: motif gene sets                  ( 836 total)
+  c4: computational gene sets          ( 858 total)
+  c6: oncogenic signatures gene sets   ( 189 total)
+  c7: immunologic signatures gene sets (4872 total)
+
+WEHI Procedure:
+The current MSigDB v5.1 xml file was downloaded.
+Human Entrez Gene IDs were mapped to Mouse Entrez Gene IDs, using the HGNC Comparison 
+of Orthology Predictions (HCOP) (downloaded 9 May 2016).
+Each collection was converted to a list in R, and written to a RData file using 
+save().

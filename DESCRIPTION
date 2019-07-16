@@ -1,0 +1,21 @@
+Package: binfotron
+Version: 0.2-09
+Title: Binfotron Bioinformatics Analysis Tools Suite
+Description: The purpose of this package is to perform upper level analysis of
+    bioinformatic data.
+Authors@R: 
+    person(given = "Dante",
+           family = "Bortone",
+           role = c("aut", "cre"),
+           email = "dantebortone@gmail.com")
+Imports:
+    magrittr,
+    ggplot2,
+    data.table,
+    checkmate,
+    parallel,
+    housekeeping
+License: All Rights reserved + file LICENSE
+NeedsCompilation: no
+RoxygenNote: 6.1.1
+Encoding: UTF-8

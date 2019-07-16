@@ -1,0 +1,6 @@
+KEGG genesests were built on 20170509 by Dante Bortone
+
+These genesets were assembled using the pathways found here:
+http://www.genome.jp/kegg-bin/get_htext#A3 (click 'download htext'). The gene sets were built using a script (assemble_kegg_genesets.R), which looks up the pathway id's using KEGGREST::keggGet.
+
+Since keggGet could get the sets independently, the hgnc and entrez humna and mouse gene sets did not need to be converted. It's unknown, however, how KEGG converted the genes.

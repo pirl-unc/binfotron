@@ -1,0 +1,5 @@
+Mouse gene sets were downloaded from http://software.broadinstitute.org/gsea/downloads.jsp
+
+  CP:KEGG (KEGG gene sets, 186 gene sets)
+  CGP (chemical and genetic perturbations, 3409 gene sets)
+  C6 (oncogenic signatures, 189 gene sets)
