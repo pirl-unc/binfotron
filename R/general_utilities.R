@@ -10,35 +10,6 @@
 
 
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' is_path_to_file
-#' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' @title Determines whether my_path goes to a file.
-#' 
-#' @description 
-#' Checks if my_path ends in one of the file_endings
-#' 
-#' @param my_path A path
-#' @param file_endings character vector of file endings
-#' 
-#' @return Boolean on whether the path ends in one of the file endings
-#'   
-#' @export
-is_path_to_file = function(my_path, file_endings = c(".pdf", ".txt", ".R", ".xlsx", ".xlx", ".doc", ".tsv", ".csv")){
-  return_value = FALSE
-  for(ending in file_endings){
-    n_ending = nchar(ending)
-    n_path = nchar(my_path)
-    path_ending = substring(my_path, n_path - n_ending + 1)
-    if(path_ending == ending){
-      return_value = TRUE
-      break
-    }
-  }
-  return(return_value)
-}
-
-
-#' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' make_intro_text
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' @title Formats intro text for stackable functions

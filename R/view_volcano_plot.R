@@ -152,7 +152,7 @@ view_volcano_plot = function(# passed from model app
     assign('my_annotation', c(get('my_annotation', envir = env), new_text), envir = env)
   }
   
-  if(my_pack %>% is_not_null){
+  if(!is.null(my_pack)){
     if(base_file_name %>% is.null){ base_file_name = my_pack$base_file_name }
     if(base_title %>% is.null()){ base_title = my_pack$base_title }
     if(colname_of_feature_groups %>% is.null){ colname_of_feature_groups = my_pack$colname_of_feature_groups }
@@ -168,6 +168,8 @@ view_volcano_plot = function(# passed from model app
   
   # let's do this as a data.frame for now
   input_df = my_dt %>% as.data.frame(); rm(my_dt)
+  input_df %<>% as.data.frame()
+  input_df = input_df[complete.cases(input_df[,c("pValue", "Fold_Change")]),]
   
   if(is.null(pdf_bookmark_title) || is.na(pdf_bookmark_title)){
     pdf_bookmark_title = gsub("_", " ", base_file_name)
@@ -179,9 +181,9 @@ view_volcano_plot = function(# passed from model app
   
   # improt annotation if there
   if(!is.null(imported_annotation)){ a(format_imported_annotation(imported_annotation)) }
-
+  
   # add subfolder if there
-  if(output_subfolder %>% is_not_null){ output_dir = file.path(output_dir, output_subfolder) }
+  if(!is.null(output_subfolder)){ output_dir = file.path(output_dir, output_subfolder) }
   dir.create(output_dir, showWarnings = FALSE)  # make output folder
   
   
@@ -206,7 +208,7 @@ view_volcano_plot = function(# passed from model app
       }
     }
   }
-
+  
   # now need error if any non critical column names are missing
   other_columns = c("colname_of_feature_groups", "colname_of_feature_names", "colname_of_FDR")
   for (other_column in other_columns){
@@ -241,7 +243,7 @@ view_volcano_plot = function(# passed from model app
   
   
   #output_df = volcano_df
-  max_significance = pvalue_stars(min(volcano_df$FDR, na.rm = T))
+  max_significance = binfotron::pvalue_stars(min(volcano_df$FDR, na.rm = T))
   
   # make legend labels
   if(sig1_label %>% is.null()){
@@ -253,8 +255,8 @@ view_volcano_plot = function(# passed from model app
   if(nonsig_label %>% is.null()){
     nonsig_label = paste0(sig2_type, " > ", sig2_cutoff)
   }
-
-
+  
+  
   
   FDR_string = sig1_label
   unadjusted_string = sig2_label
@@ -277,7 +279,7 @@ view_volcano_plot = function(# passed from model app
   sig_colors = c( "red", "darkred", "black")
   volcano_df$Significance = factor(volcano_df$Significance, levels = sig_levels)
   
-
+  
   if (plot_by_FDR){
     y_axis_label = "-Log10 FDR-Corrected pValue"
     plot_column = "FDR"
@@ -293,7 +295,7 @@ view_volcano_plot = function(# passed from model app
     x_axis_label = paste0("Log2(Fold Change)")
   }
   
-  if(colname_of_feature_groups %>% is.null){
+  if(is.null(colname_of_feature_groups)){
     
     color_values = character(0)
     for (sig_index in 1:length(sig_levels)) {
@@ -328,16 +330,16 @@ view_volcano_plot = function(# passed from model app
   
   # add labels
   volcano_plot = volcano_plot + labs(title = paste0(base_title), x = x_axis_label, y = y_axis_label) + 
-                          theme_minimal() + theme(plot.title = element_text(hjust = 0.5, size=22, margin=margin(0,0,20,0)),
-                          axis.title.x = element_text(size = axis.title.x.size, margin=margin(15,0,0,0)),
-                          axis.title.y = element_text(size = axis.title.y.size, margin=margin(0,15,0,0)),
-                          axis.text = element_text(size = 12),
-                          legend.text = element_text(size = 12),
-                          legend.title = element_text(size = 18)
-  ) 
+    theme_minimal() + theme(plot.title = element_text(hjust = 0.5, size=18, margin=margin(0,0,20,0)),
+                            axis.title.x = element_text(size = axis.title.x.size, margin=margin(15,0,0,0)),
+                            axis.title.y = element_text(size = axis.title.y.size, margin=margin(0,15,0,0)),
+                            axis.text = element_text(size = 12),
+                            legend.text = element_text(size = 12),
+                            legend.title = element_text(size = 18)
+    ) 
   
   
-  if(pValue_line %>% is_not_null){
+  if(!is.null(pValue_line)){
     #http://stackoverflow.com/questions/7705345/how-can-i-extract-plot-axes-ranges-for-a-ggplot2-object
     #ggplot version was changed by bioconductor changed and it affected this 
     # x_range = ggplot_build(volcano_plot)$panel$ranges[[1]]$x.range
@@ -351,10 +353,10 @@ view_volcano_plot = function(# passed from model app
                                              label = paste0("pValue = ", pValue_line), hjust = 0.3, vjust = 1.2)
     }
   }
-
+  
   labeled_points = volcano_df
-
-  if(n_to_label %>% is_not_null){
+  
+  if(!is.null(n_to_label)){
     if( n_to_label > 0){
       if(n_to_label > nrow(labeled_points)){
         n_to_label = nrow(labeled_points)
@@ -378,27 +380,30 @@ view_volcano_plot = function(# passed from model app
       }
     }
     
-    if(pValue_label_threshhold %>% is_not_null){
+    if(!is.null(pValue_label_threshhold)){
       a("")
       a(paste0("Labeled items with pValue <= ", pValue_label_threshhold, "."))
       labeled_points = labeled_points[labeled_points$pValue <= pValue_label_threshhold, ]
-    } else if(FDR_label_threshhold %>% is_not_null){
+    } else if(!is.null(FDR_label_threshhold)){
       a("")
       a(paste0("Labeled items with FDR corrected pValue <= ", FDR_label_threshhold, "."))
       labeled_points = labeled_points[labeled_points$FDR <= FDR_label_threshhold, ]
     } 
     
-    if(nrow(labeled_points) > max_number_of_labels){
+    if(max_number_of_labels == 0){
+      labeled_points = labeled_points[FALSE, ]
+    } else if(nrow(labeled_points) > max_number_of_labels){
       labeled_points = labeled_points[order(labeled_points$pValue)[1:max_number_of_labels], ]
     }
+    
   }
   
-
+  
   if(nrow(labeled_points) > 0){
     library(ggrepel)
     
     # trim text
-    if(strings_to_cut_from_labels %>% is_not_null){
+    if(!is.null(strings_to_cut_from_labels)){
       for(this_str in strings_to_cut_from_labels){
         labeled_points$Feature_Name = gsub(this_str, "", labeled_points$Feature_Name)
         labeled_points$Feature_Name = gsub("__", "_", labeled_points$Feature_Name) # get rid of doubles created by removals
@@ -409,16 +414,16 @@ view_volcano_plot = function(# passed from model app
       
     }
     
-
+    
     if(colname_of_feature_groups %>% is.null){
-       volcano_plot = volcano_plot + geom_label_repel(data = labeled_points, aes(label=Feature_Name), alpha = 1, 
-                                                       color = 'black', size = label_font_size, show.legend = FALSE, 
-                                                       # seems like color of font and outline are linked
-                                                       box.padding = unit(0.3, "lines"),# sets how spread apart the boxes are
-                                                       point.padding = unit(0.3, "lines"),# sets how far the lines sits away from the point
-                                                       label.padding = unit(0.15, "lines"), # sets how big the box around the text is
-                                                       segment.color = "#666666", segment.size = 0.25,
-                                                       force = 2)
+      volcano_plot = volcano_plot + geom_label_repel(data = labeled_points, aes(label=Feature_Name), alpha = 1, 
+                                                     color = 'black', size = label_font_size, show.legend = FALSE, 
+                                                     # seems like color of font and outline are linked
+                                                     box.padding = unit(0.3, "lines"),# sets how spread apart the boxes are
+                                                     point.padding = unit(0.3, "lines"),# sets how far the lines sits away from the point
+                                                     label.padding = unit(0.15, "lines"), # sets how big the box around the text is
+                                                     segment.color = "#666666", segment.size = 0.25,
+                                                     force = 2)
     } else { # for DAVID clustered analysis
       volcano_df$Significance[volcano_df$Group %>% is.na] = ns_string
       
@@ -460,13 +465,13 @@ view_volcano_plot = function(# passed from model app
   if(log_completion){
     warning("Haven't fixed toolkit's add_to_completed_analyses yet")
     
-#     add_to_completed_analyses(
-#       classifier = models_argument_list$classifier,
-#       included = models_argument_list$inclusion_list,
-#       excluded = models_argument_list$exclusion_list,
-#       model = my_model,
-#       view = "Volcano_Plot",
-#       path = save_path)
+    #     add_to_completed_analyses(
+    #       classifier = models_argument_list$classifier,
+    #       included = models_argument_list$inclusion_list,
+    #       excluded = models_argument_list$exclusion_list,
+    #       model = my_model,
+    #       view = "Volcano_Plot",
+    #       path = save_path)
   }
   a(' Volcano plot done' %>% as.footer)
   annotation_path = file.path(output_dir, paste0(base_file_name, get_note_extension()))
