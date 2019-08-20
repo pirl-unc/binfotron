@@ -20,10 +20,10 @@ calc_IMPRES = function(func_GE_df, ID_list, user_ckpt_pair_df) {
     input_type = "DT"
   }
   else {
-    assert(checkmate::checkDataFrame(func_GE_df))
+    checkmate::assert(checkmate::checkDataFrame(func_GE_df))
   }
    
-  assert(checkmate::checkList(ID_list))
+  checkmate::assert(checkmate::checkList(ID_list))
   
   if(!missing(user_ckpt_pair_df)) {
     if(checkmate::checkMultiClass(user_ckpt_pair_df, "data.table") == "FALSE") {
