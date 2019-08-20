@@ -11,7 +11,7 @@
 #' 
 #' @export
 calc_IMPRES = function(func_GE_df, ID_list, user_ckpt_pair_df) {
-  if(checkmate::checkClass(func_GE_df, "data.frame") == "TRUE" & checkmate::checkClass(func_GE_df, "data.table") != "TRUE") {
+  if(checkClass(func_GE_df, "data.frame") == "TRUE" & checkmate::checkClass(func_GE_df, "data.table") != "TRUE") {
     input_type = "DF"
     func_GE_df = as.data.table(func_GE_df)
     checkmate::assert(checkmate::checkDataTable(func_GE_df))
