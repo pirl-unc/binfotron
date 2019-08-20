@@ -4,15 +4,17 @@
 \alias{calc_IMPRES}
 \title{calc_IMPRES}
 \usage{
-calc_IMPRES(func_GE_df, ID_list)
+calc_IMPRES(func_GE_df, ID_list, user_ckpt_pair_df)
 }
 \arguments{
-\item{ID_list}{List of all sample IDs}
+\item{ID_list}{List of all sample IDs, list order matches row order in gene expression matrix}
+
+\item{user_ckpt_pair_df}{optional data frame with user defined gene comparisons}
 
 \item{func_GE_DF}{Gene expression matrix, each column is a gene, each row is a sample}
 }
 \value{
-Returns data table with 2 columns: sample ID & IMPRES score
+Returns data frame/table with 2 columns: sample ID & IMPRES score
 }
 \description{
 calc_IMPRES

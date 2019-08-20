@@ -11,29 +11,29 @@
 #' 
 #' @export
 calc_IMPRES = function(func_GE_df, ID_list, user_ckpt_pair_df) {
-  if(checkClass(func_GE_df, "data.frame") == "TRUE" & checkClass(func_GE_df, "data.table") != "TRUE") {
+  if(checkmate::checkClass(func_GE_df, "data.frame") == "TRUE" & checkmate::checkClass(func_GE_df, "data.table") != "TRUE") {
     input_type = "DF"
     func_GE_df = as.data.table(func_GE_df)
-    assert(checkDataTable(func_GE_df))
+    checkmate::assert(checkmate::checkDataTable(func_GE_df))
   }
-  else if(checkMultiClass(func_GE_df, c("data.frame", "data.table")) == "TRUE") {
+  else if(checkmate::checkMultiClass(func_GE_df, c("data.frame", "data.table")) == "TRUE") {
     input_type = "DT"
   }
   else {
-    assert(checkDataFrame(func_GE_df))
+    assert(checkmate::checkDataFrame(func_GE_df))
   }
    
-  assert(checkList(ID_list))
+  assert(checkmate::checkList(ID_list))
   
   if(!missing(user_ckpt_pair_df)) {
-    if(checkMultiClass(user_ckpt_pair_df, "data.table") == "FALSE") {
-      if (checkClass(user_ckpt_pair_df, "data.frame") == "TRUE") {
+    if(checkmate::checkMultiClass(user_ckpt_pair_df, "data.table") == "FALSE") {
+      if (checkmate::checkClass(user_ckpt_pair_df, "data.frame") == "TRUE") {
         ckpt_pair_df = as.data.table(user_ckpt_pair_df)
         colnames(ckpt_pair_df) = c("gene1_list", "gene2_list")
       }
     }
     else {
-      assert(checkDataFrame(user_ckpt_pair_df))
+      checkmate::assert(checkmate::checkDataFrame(user_ckpt_pair_df))
     }
   }
   else {
