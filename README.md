@@ -6,8 +6,8 @@ In R:
 ``` r
 devtools::install_github("DanteBortone/housekeeping") # if needed
 
-housekeeping::assemble_package(package_name = "binfotron", my_version = "0.2-11-01", 
-  my_dir = "/datastore/alldata/shiny-server/rstudio-common/sent13/binfotron/add_IMPRES_calc_function/binfotron_dev_sae", 
+housekeeping::assemble_package(package_name = "binfotron", my_version = "0.2-11-02", 
+  my_dir = "/datastore/alldata/shiny-server/rstudio-common/sent13/binfotron/add_IMPRES_calc_function/binfotron_dev_dsb", 
   should_build = FALSE)
 ```
 
