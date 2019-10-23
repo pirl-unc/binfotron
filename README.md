@@ -2,7 +2,7 @@ The purpose of this package is perform higher level statistical analyses on RNA-
 
 
 ## Install
-Restart R Session
+Restart R Session  
 In R:
 ``` r
 devtools::install_github("Benjamin-Vincent-Lab/binfotron")
