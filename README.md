@@ -5,11 +5,11 @@ The purpose of this package is perform higher level statistical analyses on RNA-
 Restart R Session
 In R (local library, packrat library):
 ``` r
-devtools::install_bitbucket("unc_lineberger/binfotron")
+devtools::install_github("Benjamin-Vincent-Lab/binfotron")
 ```
 
 Or for a specific version:
 ``` r
-devtools::install_bitbucket("unc_lineberger/binfotron", ref = "0.2-10")
+devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.2-12")
 ```
 

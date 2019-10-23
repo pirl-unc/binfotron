@@ -182,7 +182,7 @@ view_boxplot = function(# passed from analysis app
   category_n = summary(boxplot_df[[grouping_col]])
 
 
-  boxplot_df[,feature_names ] = apply(boxplot_df[,feature_names, drop = FALSE], 2, function(x){as.numeric(as.character(x))}) # need to make the cloumns the same type or we will get a complaint that data is lost in 
+  boxplot_df[,feature_names ] = apply(boxplot_df[,feature_names, drop = FALSE], 2, function(x){as.numeric(as.character(x))}) # need to make the columns the same type or we will get a complaint that data is lost in 
   if(!is.null(matched_col)){
     
     boxplot_df = boxplot_df[, c(matched_col, grouping_col, feature_names)] # this converts pipes into periods in the titles so names are fixed in next step
