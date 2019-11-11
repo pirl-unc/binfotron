@@ -13,3 +13,5 @@ Or for a specific version:
 devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.2-12")
 ```
 
+# Previous location
+https://bitbucket.org/unc_lineberger/binfotron/
