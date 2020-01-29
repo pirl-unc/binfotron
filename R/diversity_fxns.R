@@ -218,19 +218,20 @@ has_sufficient_abundance_for_entropy = function(my_abundance, measured_entropy){
 #' @title predict_true_entropy_from_diversity 
 #' 
 #' @description
-#' Uses an elastic net model to predict true entropy.  Two models are used to cover
-#' different abundnce ranges.  2-1024 is one model 1025-65536 is another.  Over 2^16
-#' just returns the shannon entropy, which is pretty accurate over this amount. These
-#' models were build around tcga tcr distributions that had an entropy range of 0.975 
-#' to 8.1 if corrected entropy is outside of this range then the data should be taken 
-#' with caution.
+#' Uses an elastic net model to predict true Shannon entropy (ie Shannon entropy at an abundance of 100 million).  Two models are used to cover different abundance ranges.  2-1024 is one model 1025-65536 is another.  Lastly, if the abundance and Shannon entropy are over a threshhold predetermined to produce results within 95% of the true Shannon entropy the data are not modeled and Shannon entropy is returned. Of note these models were trained on an entropy range between 0.98 and 8.11.  If your corrected entropy values are often outside of this range this model may not be appropriate for your dataset.  If you have counts, consider using the \link[binfotron]{predict_true_entropy_from_counts} instead.
 #' 
-#' @param my_counts vector of postive integers
+#' 
+#' @param my_abundance Numeric.  Sum of counts for a population.  For T/BCR this would be total reads for the chain.
+#' @param my_richness Numeric.  Number of species or clonotypes.
+#' @param my_d25 Numeric. \link[binfotron]{dXX_index}
+#' @param my_inv_simpson Numeric. \link[binfotron]{inv_simpson}
+#' @param my_chao1 Numeric. \link[binfotron]{chao1}
+#' @param my_shannon_entropy Numeric. \link[binfotron]{shannon_entropy}
+#' @param my_evenness Numeric. \link[binfotron]{evenness}
 #' @param should_screen_counts Boolean to indicate if the coutns should be screened
 #'   for valid data.  Set to false if the data has already been checked by another function.
 #' @param min_abundance Integer to indicate minimun number of counts needed (ie. \code{sum(my_counts)})
 #'   to get a valid prediction.  
-#' @param max_abundance Integer over which the function will return shannon entropy.
 #' 
 #' @return Modeled prediction of diversity 
 #' 
@@ -310,19 +311,11 @@ predict_true_entropy_from_diversity = function(
 #' @title predict_true_entropy_from_counts 
 #' 
 #' @description
-#' Uses an elastic net model to predict true entropy.  Two models are used to cover
-#' different abundnce ranges.  2-1024 is one model 1025-65536 is another.  Over 2^16
-#' just returns the shannon entropy, which is pretty accurate over this amount. These
-#' models were build around tcga tcr distributions that had an entropy range of 0.975 
-#' to 8.1 if corrected entropy is outside of this range then the data should be taken 
-#' with caution.
+#' Uses an elastic net model to predict true Shannon entropy (ie Shannon entropy at an abundance of 100 million).  Two models are used to cover different abundance ranges.  2-1024 is one model 1025-65536 is another.  Lastly, if the abundance and Shannon entropy are over a threshhold predetermined to produce results within 95% of the true Shannon entropy the data are not modeled and Shannon entropy is returned. Of note these models were trained on an entropy range between 0.98 and 8.11.  If your corrected entropy values are often outside of this range this model may not be appropriate for your dataset.  Consider using the \link[binfotron]{predict_true_entropy_from_diversity} if you have the following diversity metrics already calculated: abundance, richness, d25, Shannon entropy, evenness, inv_simpson, chao1.
 #' 
 #' @param my_counts vector of postive integers
-#' @param should_screen_counts Boolean to indicate if the coutns should be screened
-#'   for valid data.  Set to false if the data has already been checked by another function.
-#' @param min_abundance Integer to indicate minimun number of counts needed (ie. \code{sum(my_counts)})
-#'   to get a valid prediction.  
-#' @param max_abundance Integer over which the function will return shannon entropy.
+#' @param should_screen_counts Boolean to indicate if the counts should be screened for valid data.  Set to false if the data has already been checked by another function.
+#' @param min_abundance Integer to indicate minimun number of counts needed (ie. \code{sum(my_counts)}) to get a valid prediction.  
 #' 
 #' @return Modeled prediction of diversity 
 #' 
