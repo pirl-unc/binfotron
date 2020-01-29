@@ -9,26 +9,31 @@ predict_true_entropy_from_diversity(my_abundance, my_richness, my_d25,
   min_abundance = 2, should_screen_counts = TRUE)
 }
 \arguments{
+\item{my_abundance}{Numeric.  Sum of counts for a population.  For T/BCR this would be total reads for the chain.}
+
+\item{my_richness}{Numeric.  Number of species or clonotypes.}
+
+\item{my_d25}{Numeric. \link[binfotron]{dXX_index}}
+
+\item{my_inv_simpson}{Numeric. \link[binfotron]{inv_simpson}}
+
+\item{my_chao1}{Numeric. \link[binfotron]{chao1}}
+
+\item{my_shannon_entropy}{Numeric. \link[binfotron]{shannon_entropy}}
+
+\item{my_evenness}{Numeric. \link[binfotron]{evenness}}
+
 \item{min_abundance}{Integer to indicate minimun number of counts needed (ie. \code{sum(my_counts)})
 to get a valid prediction.}
 
 \item{should_screen_counts}{Boolean to indicate if the coutns should be screened
 for valid data.  Set to false if the data has already been checked by another function.}
-
-\item{my_counts}{vector of postive integers}
-
-\item{max_abundance}{Integer over which the function will return shannon entropy.}
 }
 \value{
 Modeled prediction of diversity
 }
 \description{
-Uses an elastic net model to predict true entropy.  Two models are used to cover
-different abundnce ranges.  2-1024 is one model 1025-65536 is another.  Over 2^16
-just returns the shannon entropy, which is pretty accurate over this amount. These
-models were build around tcga tcr distributions that had an entropy range of 0.975 
-to 8.1 if corrected entropy is outside of this range then the data should be taken 
-with caution.
+Uses an elastic net model to predict true Shannon entropy (ie Shannon entropy at an abundance of 100 million).  Two models are used to cover different abundance ranges.  2-1024 is one model 1025-65536 is another.  Lastly, if the abundance and Shannon entropy are over a threshhold predetermined to produce results within 95% of the true Shannon entropy the data are not modeled and Shannon entropy is returned. Of note these models were trained on an entropy range between 0.98 and 8.11.  If your corrected entropy values are often outside of this range this model may not be appropriate for your dataset.  If you have counts, consider using the \link[binfotron]{predict_true_entropy_from_counts} instead.
 }
 \seealso{
 Other diversity: \code{\link{chao1}},
