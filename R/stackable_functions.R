@@ -352,11 +352,10 @@ normalize_rows_by_quartile = function(
   text_output = make_intro_text(function_name, my_summary)
   
   col_names %<>% operatable_columns(my_dt, acceptable_classes = c("numeric", "integer"), sample_key = sample_key)
-  
+  cat("Found columns\n")
 
   start_time = proc.time()[3]
-  paste("hi")
-  
+
   my_dt[,col_names] = t(apply(my_dt[,.SD, .SDcols = col_names], 1, function(x){x * norm_factor/quantile(x[x>0],percentile/100, na.rm=T)})) %>% as.data.table()
   cat(paste0("Time for running ", function_name, ': ', proc.time()[3] - start_time))
   cat("\n\n")
