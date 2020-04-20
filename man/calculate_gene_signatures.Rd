@@ -5,9 +5,9 @@
 \title{Calculate gene signatures on my_dt using a gmt file.}
 \usage{
 calculate_gene_signatures(my_dt = NULL, gene_cols = NULL,
-  gene_element = 2, gmt_file_path, min_genes = 1, my_fun = median,
+  gene_element = 1, gmt_file_path, min_genes = 1, my_fun = median,
   my_summary = "Gene signatures by default are the median of the genes listed in the signature for each sample.",
-  only_return_signatures = FALSE, output_path = NULL,
+  only_return_signatures = TRUE, summary_output_path = NULL,
   sample_key = get_default_sample_key(), signatures = NULL,
   readme_path = NULL, na_remove = TRUE)
 }
@@ -34,7 +34,7 @@ to my_dt.}
 should be included in the result.  Gene columns will be dropped.  This is helpful in 
 returning categories with the gene signature scores}
 
-\item{output_path}{If specified this is where the summary data for making this gene 
+\item{summary_output_path}{If specified this is where the summary data for making this gene 
 signature will go.}
 
 \item{sample_key}{Character string to specify the column that is the sample key. This 
