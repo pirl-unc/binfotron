@@ -29,6 +29,10 @@ create_gene_lookup = function(
   sep = "\t",
   db_object = NULL
 ){
+  # TODOs add cross species lookups
+  
+  library(annotate)
+  
   if(is.null(db_object)){
     library(org.Hs.eg.db)
     db_object = org.Hs.eg.db
@@ -137,7 +141,7 @@ convert_gmt_file = function(
     readme_notes = c(readme_notes, housekeeping::import_annotation(input_readme_path))
   }
   readme_notes = c(readme_notes, 
-                      paste0("On ", format(Sys.time(), "%a %b %d %X %Y"), " converted the gmt file from ", 
+                      paste0("On ", format(Sys.time(), "%a %b %d %X %Y"), ", converted the gmt file from ", 
                              input_type, " to ", output_type, 
                              " using binfotron::convert_gmt_file v", packageVersion("binfotron")))
   

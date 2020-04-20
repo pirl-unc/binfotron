@@ -43,6 +43,25 @@ get_gene_set_entrez_human_bgvlab_path = function(){
   }
 
 
+#' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' get_gene_set_hgnc_human_bgvlab_path
+#' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @title get_gene_set_hgnc_human_bgvlab_path 
+#' 
+#' @description 
+#' Returns the path to the symbol, human, BGVLab signatures in the package library.
+#' 
+#' @param none
+#' 
+#' @return A path to the gmt file.
+#' 
+#' @family gene_signatures
+#' 
+#' @export
+get_gene_set_hgnc_human_bgvlab_path = function(){
+  return(system.file(file.path("gene_sets", "symbol", "human", "BGVLab", "hgnc_human_bgvlab.gmt.txt"), package = "binfotron"))
+}
+
 
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' get_gene_set_entrez_human_kegg_path
