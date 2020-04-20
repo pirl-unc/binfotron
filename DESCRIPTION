@@ -1,5 +1,5 @@
 Package: binfotron
-Version: 0.2-14
+Version: 0.3-00
 Title: Binfotron Bioinformatics Analysis Tools Suite
 Description: The purpose of this package is to perform upper level analysis of
     bioinformatic data.
@@ -15,6 +15,9 @@ Imports:
     checkmate,
     parallel,
     housekeeping
+Suggests:
+    org.Hs.eg.db,
+    annotate
 License: All Rights reserved + file LICENSE
 NeedsCompilation: no
 RoxygenNote: 6.1.1
