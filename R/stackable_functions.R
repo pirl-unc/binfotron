@@ -352,11 +352,10 @@ normalize_rows_by_quartile = function(
   text_output = make_intro_text(function_name, my_summary)
   
   col_names %<>% operatable_columns(my_dt, acceptable_classes = c("numeric", "integer"), sample_key = sample_key)
-  
+  cat("Found columns\n")
 
   start_time = proc.time()[3]
-  paste("hi")
-  
+
   my_dt[,col_names] = t(apply(my_dt[,.SD, .SDcols = col_names], 1, function(x){x * norm_factor/quantile(x[x>0],percentile/100, na.rm=T)})) %>% as.data.table()
   cat(paste0("Time for running ", function_name, ': ', proc.time()[3] - start_time))
   cat("\n\n")
@@ -523,7 +522,7 @@ convert_piped_col_names_to_single_names = function(
 #' @param only_return_signatures Boolean indicating whether or not all of the non-gene columns
 #'   should be included in the result.  Gene columns will be dropped.  This is helpful in 
 #'   returning categories with the gene signature scores
-#' @param output_path If specified this is where the summary data for making this gene 
+#' @param summary_output_path If specified this is where the summary data for making this gene 
 #'   signature will go.
 #' @param sample_key Character string to specify the column that is the sample key. This 
 #'   column will not be operated upon. 
@@ -537,13 +536,13 @@ convert_piped_col_names_to_single_names = function(
 calculate_gene_signatures = function(
   my_dt = NULL,
   gene_cols = NULL,
-  gene_element = 2,
+  gene_element = 1,
   gmt_file_path,
   min_genes = 1,
   my_fun = median,
   my_summary = "Gene signatures by default are the median of the genes listed in the signature for each sample.",
-  only_return_signatures = FALSE,  # as opposed to the other_data_columns (ie non gene columns)
-  output_path = NULL,
+  only_return_signatures = TRUE,  # as opposed to the other_data_columns (ie non gene columns)
+  summary_output_path = NULL,
   sample_key = get_default_sample_key(),
   signatures = NULL,
   readme_path = NULL,
@@ -561,7 +560,7 @@ calculate_gene_signatures = function(
   gmt_file = basename(gmt_file_path)
   
   
-  gmt_annotation = import_annotation(gmt_file_path)
+  gmt_annotation = housekeeping::import_annotation(gmt_file_path)
   text_output = c("Using gmt file: ", gmt_file)
   if(length(gmt_annotation) > 0){
     text_output %<>% c(gmt_annotation, "")
@@ -600,11 +599,6 @@ calculate_gene_signatures = function(
   gene_indices = match(gene_cols, names(my_dt))
   names(my_dt)[gene_indices] = genes_ids
   
-  # names(gene_dat)[2:ncol(gene_dat)] = genes_ids
-  # 
-  #a("Get proportion of genes set genes found in the gene data:")
-  #a("")
-  #a(paste("Gene Signature", "Total Genes", "Genes Found", "% Found", sep = "\t"))
   sig_stat_cols = c("Gene_Signature", "Total_Genes", "Genes_Found", "Percent_Found")
   sig_stats = data.frame(matrix(nrow = length(gsc), ncol = length(sig_stat_cols)))
   names(sig_stats) = sig_stat_cols
@@ -656,11 +650,11 @@ calculate_gene_signatures = function(
   }
   
   
-  if(!is.null(output_path)){
-    if(grepl(".csv$", output_path)){
-      fwrite(sig_stats, output_path, sep = ",")
+  if(!is.null(summary_output_path)){
+    if(grepl(".csv$", summary_output_path)){
+      fwrite(sig_stats, summary_output_path, sep = ",")
     } else {
-      fwrite(sig_stats, output_path, sep = "\t")
+      fwrite(sig_stats, summary_output_path, sep = "\t")
     }
   }
   
