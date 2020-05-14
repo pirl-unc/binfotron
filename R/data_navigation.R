@@ -126,6 +126,27 @@ get_gene_set_entrez_human_c2_path = function(){
 
 
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' get_gene_set_hgnc_human_c2cp_path
+#' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @title get_gene_set_hgnc_human_c2cp_path 
+#' 
+#' @description 
+#' Returns the path to the entrez_id, human, c2 signatures in the package library.
+#' 
+#' @param none
+#' 
+#' @return A path to the human_c2_v5p1.rdata file.
+#' 
+#' @family gene_signatures
+#' 
+#' @export
+get_gene_set_hgnc_human_c2cp_path = function(){
+  return(system.file("gene_sets", "symbol", "human", "c2cp", "c2.cp.v6.0.symbols.gmt.txt", package = "binfotron"))
+}
+
+
+
+#' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' get_biomart_hsa_ucsc_path
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' @title get_biomart_hsa_ucsc_path 
