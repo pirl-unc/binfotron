@@ -13,7 +13,7 @@ model_regression(input_dt, indep_list,
   model_function = function(dep_var = "", indep_vars = "NULL") {    
   paste0("glm(", dep_var, " ~ ", paste0(indep_vars, collapse = " + "),
   ", data = model_dt)") }, my_grouping = NULL, output_dir = ".",
-  time_col = "OS_d")
+  time_col = "OS_d", write_files = TRUE)
 }
 \arguments{
 \item{input_dt}{A data.table that includes all columns of data needed to do the 
@@ -101,6 +101,8 @@ the data into groups. If specified, this column needs to present in \code{input_
 
 \item{time_col}{For coxph.  The name of the column from which to draw the time 
 information.  If specified, this column needs to present in \code{input_dt}.}
+
+\item{write_files}{Boolean on whether you wuold like to write the output files.}
 }
 \value{
 List containing several outputs: 
