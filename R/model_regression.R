@@ -918,11 +918,14 @@ model_regression = function(
     if(write_files) fwrite(comp_dt, model_comparison_path, quote = FALSE, sep = "\t", col.names = TRUE, na = "NA")
     a("Done with regression")
     a("")
-    return(list(stats = pvalue_dt, model_comp = comp_dt, readme = readLines(readme_path)))
+    readme_content = readLines(readme_path)
+    if(!write_files) file.remove(readme_path)
+    return(list(stats = pvalue_dt, model_comp = comp_dt, readme = readme_content))
   } else {
     a("Done with regression")
     a("")
-    return(list(stats = pvalue_dt, readme = readLines(readme_path)))
+    readme_content = readLines(readme_path)
+    if(!write_files) file.remove(readme_path)
+    return(list(stats = pvalue_dt, readme = readme_content))
   }
-  if(!write_files) file.remove(readme_path)
 }
