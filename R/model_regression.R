@@ -81,6 +81,7 @@
 #' @param fdr_method Passed to \code{\link{binfotron::calc_fdr}}. String to tell 
 #' what method to use to FDR correct. Must be one of the values in 
 #' \code{stats::p.adjust.methods}.
+#' @param write_files Boolean on whether you wuold like to write the output files.
 #' 
 #' @return List containing several outputs: 
 #' \enumerate{
@@ -131,7 +132,8 @@ model_regression = function(
   },
   my_grouping = NULL, # "Tissue"
   output_dir = ".",
-  time_col = "OS_d"
+  time_col = "OS_d",
+  write_files = TRUE
 ){
   
   library(checkmate)
@@ -146,7 +148,7 @@ model_regression = function(
   model_comparison_path = file.path(output_dir, paste0(base_file_name, "_models.tsv"))
   if(file.exists(model_comparison_path)) file.remove(model_comparison_path)
   
-  readme_path = file.path(output_dir, paste0("readme.md"))
+  readme_path = file.path(output_dir, paste0(base_file_name, "_readme.txt"))
   if(clear_readme) if(file.exists(readme_path)) file.remove(readme_path)
   
   a = function(...){
@@ -898,9 +900,7 @@ model_regression = function(
       )
   }
   
-  
-  fwrite(pvalue_dt, stats_path, 
-         quote = FALSE, sep = "\t", col.names = TRUE, na = "NA")
+  if(write_files) fwrite(pvalue_dt, stats_path, quote = FALSE, sep = "\t", col.names = TRUE, na = "NA")
   
   if(nrow(comp_dt) > 0){
     
@@ -915,14 +915,17 @@ model_regression = function(
       )
     }
     
-    fwrite(comp_dt, model_comparison_path, 
-           quote = FALSE, sep = "\t", col.names = TRUE, na = "NA")
+    if(write_files) fwrite(comp_dt, model_comparison_path, quote = FALSE, sep = "\t", col.names = TRUE, na = "NA")
     a("Done with regression")
     a("")
-    return(list(stats = pvalue_dt, model_comp = comp_dt, readme = readLines(readme_path)))
+    readme_content = readLines(readme_path)
+    if(!write_files) file.remove(readme_path)
+    return(list(stats = pvalue_dt, model_comp = comp_dt, readme = readme_content))
   } else {
     a("Done with regression")
     a("")
-    return(list(stats = pvalue_dt, readme = readLines(readme_path)))
+    readme_content = readLines(readme_path)
+    if(!write_files) file.remove(readme_path)
+    return(list(stats = pvalue_dt, readme = readme_content))
   }
 }
