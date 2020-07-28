@@ -10,7 +10,7 @@ get_corrected_entropy_rdata_ab8_1024_ent1_8_path()
 A path to the RData file
 }
 \description{
-Returns the path to the corrected entropy model for abundances in the range of 1025-65536.
+Returns the path to the corrected entropy model for abundances in the range of 8-1024
 }
 \details{
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
