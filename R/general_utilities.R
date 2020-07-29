@@ -136,11 +136,13 @@ import_gmt_as_list = function(gmt_file_path){ # outputs as a gene set collection
   gene_list = list()
   for(line in gmt_import){
     split_line = unlist(strsplit(line,'\t', fixed=T))
+    #gene_set_name = format_gene_set_name(split_line[1]) # get rid of periods and hyphens
     gene_set_name = format_gene_set_name(split_line[1]) # get rid of periods and hyphens
+    
     gene_set_genes = split_line[3:length(split_line)]
     gene_set_genes = gene_set_genes[gene_set_genes != 'NA']
     gene_set_genes = gene_set_genes[gene_set_genes != '']
-    assembled_code = paste0("gene_list$", gene_set_name, " = c('", paste(gene_set_genes, collapse="','"), "')")
+    assembled_code = paste0("gene_list$`", gene_set_name, "` = c('", paste(gene_set_genes, collapse="','"), "')")
     #print(line)
     eval(parse(text = assembled_code))
   }
@@ -176,7 +178,8 @@ import_gmt_as_list = function(gmt_file_path){ # outputs as a gene set collection
 #' 
 #' @export
 format_gene_set_name = function(my_string) {
-  x <- gsub('\\.|\\-','_', my_string) # swap hyphens for underscores
+  #x <- gsub('\\.|\\-','_', my_string) # swap hyphens for underscores
+  x <- gsub('\\-','_', my_string) # swap hyphens for underscores
   return(x)
 }
 
