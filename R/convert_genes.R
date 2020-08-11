@@ -135,7 +135,7 @@ convert_gmt_file = function(
     input_readme_path = list.files(dirname(input_path), pattern = "readme", ignore.case = TRUE, full.names = TRUE)[1]
   }
   
-  readme_notes = paste0("Started with gmt file last modified on ", my_info , " from source: ", input_path)
+  readme_notes = paste0("Started with gmt file: ", input_path)
   readme_notes = c(readme_notes, "")
   if(!is.na(input_readme_path)){
     readme_notes = c(readme_notes, housekeeping::import_annotation(input_readme_path))
