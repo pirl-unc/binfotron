@@ -48,7 +48,7 @@ create_gene_lookup = function(
   cat(paste0("Each input mapped to average of ", fwd_mean," output(s)", "\n"))
   cat(paste0("Each output mapped to average of ", rev_mean," input(s)", "\n"))
   
-  if(is.null(sep_value)){
+  if(is.null(sep)){
     output_values = tapply(return_values[[2]], return_values[[1]], function(x){
       x = x[!is.na(x)]
       return(x[1])
