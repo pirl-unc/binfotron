@@ -101,7 +101,7 @@ convert_gmt_file = function(
     db_object = org.Hs.eg.db
   }
   
-  gmt_lines = readLines(gmt_path)
+  gmt_lines = readLines(input_path)
   all_genes = c()
   combined_list = list()
   max_sig_length = 0
