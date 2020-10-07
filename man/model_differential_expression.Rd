@@ -15,7 +15,11 @@ model_differential_expression(
   design_var = NULL,
   gene_expression_cols = NULL,
   gmt_file_fdr_cutoffs = c(0.2, 0.05),
+<<<<<<< HEAD
   gmt_file_pvalue_cutoffs = c(0.01),
+=======
+  gmt_file_pvalue_cutoffs = c(0.05),
+>>>>>>> 0f15335346e040e4d7a17c1429b75222bde6c4cf
   gmt_ref = "Gene signature created from custom analysis.",
   imported_annotation = NULL,
   my_grouping = NULL,
