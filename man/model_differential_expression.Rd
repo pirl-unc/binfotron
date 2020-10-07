@@ -4,16 +4,24 @@
 \alias{model_differential_expression}
 \title{Does a differential gene expression analysis.}
 \usage{
-model_differential_expression(my_dt = NULL, analysis_method = "DESeq2",
-  base_file_name = NULL, base_title = NULL,
+model_differential_expression(
+  my_dt = NULL,
+  analysis_method = "DESeq2",
+  base_file_name = NULL,
+  base_title = NULL,
   core_number = round(detectCores()/2),
   deseq2_results_cooksCutoff = NULL,
-  deseq2_results_independentFiltering = TRUE, design_var = NULL,
-  gene_expression_cols = NULL, gmt_file_fdr_cutoffs = c(0.2, 0.05),
+  deseq2_results_independentFiltering = TRUE,
+  design_var = NULL,
+  gene_expression_cols = NULL,
+  gmt_file_fdr_cutoffs = c(0.2, 0.05),
   gmt_file_pvalue_cutoffs = c(0.01),
   gmt_ref = "Gene signature created from custom analysis.",
-  imported_annotation = NULL, my_grouping = NULL, output_dir,
-  sample_key_col = "Sample_ID")
+  imported_annotation = NULL,
+  my_grouping = NULL,
+  output_dir,
+  sample_key_col = "Sample_ID"
+)
 }
 \arguments{
 \item{analysis_method}{String option out of the following choices:  DESeq2, DESeq, SAM, or edgeR. Indicating which method

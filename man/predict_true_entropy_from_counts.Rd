@@ -4,8 +4,11 @@
 \alias{predict_true_entropy_from_counts}
 \title{predict_true_entropy_from_counts}
 \usage{
-predict_true_entropy_from_counts(my_counts, min_abundance = 2,
-  should_screen_counts = TRUE)
+predict_true_entropy_from_counts(
+  my_counts,
+  min_abundance = 2,
+  should_screen_counts = TRUE
+)
 }
 \arguments{
 \item{my_counts}{vector of postive integers}
@@ -30,16 +33,18 @@ to 8.1 if corrected entropy is outside of this range then the data should be tak
 with caution.
 }
 \seealso{
-Other diversity: \code{\link{chao1}},
-  \code{\link{dXX_index}}, \code{\link{evenness}},
-  \code{\link{get_corrected_entropy_rdata_2_4096_path}},
-  \code{\link{get_corrected_entropy_rdata_4097_65536_path}},
-  \code{\link{get_corrected_entropy_rdata_ab1025_65K_ent1_8_path}},
-  \code{\link{get_corrected_entropy_rdata_ab8_1024_ent1_8_path}},
-  \code{\link{has_sufficient_abundance_for_entropy}},
-  \code{\link{inv_simpson}},
-  \code{\link{predict_true_entropy_from_diversity}},
-  \code{\link{screen_counts}},
-  \code{\link{shannon_entropy}}
+Other diversity: 
+\code{\link{chao1}()},
+\code{\link{dXX_index}()},
+\code{\link{evenness}()},
+\code{\link{get_corrected_entropy_rdata_2_4096_path}()},
+\code{\link{get_corrected_entropy_rdata_4097_65536_path}()},
+\code{\link{get_corrected_entropy_rdata_ab1025_65K_ent1_8_path}()},
+\code{\link{get_corrected_entropy_rdata_ab8_1024_ent1_8_path}()},
+\code{\link{has_sufficient_abundance_for_entropy}()},
+\code{\link{inv_simpson}()},
+\code{\link{predict_true_entropy_from_diversity}()},
+\code{\link{screen_counts}()},
+\code{\link{shannon_entropy}()}
 }
 \concept{diversity}

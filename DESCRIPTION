@@ -1,5 +1,5 @@
 Package: binfotron
-Version: 0.2-11
+Version: 0.3-19
 Title: Binfotron Bioinformatics Analysis Tools Suite
 Description: The purpose of this package is to perform upper level analysis of
     bioinformatic data.
@@ -17,5 +17,5 @@ Imports:
     housekeeping
 License: All Rights reserved + file LICENSE
 NeedsCompilation: no
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Encoding: UTF-8

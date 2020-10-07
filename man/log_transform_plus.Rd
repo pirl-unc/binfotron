@@ -4,9 +4,15 @@
 \alias{log_transform_plus}
 \title{Does a log transformation of the data plus a specified value.}
 \usage{
-log_transform_plus(my_dt = NULL, add_value = 1, base = 2,
-  col_names = NULL, my_summary = NULL,
-  sample_key = get_default_sample_key(), readme_path = NULL)
+log_transform_plus(
+  my_dt = NULL,
+  add_value = 1,
+  base = 2,
+  col_names = NULL,
+  my_summary = NULL,
+  sample_key = get_default_sample_key(),
+  readme_path = NULL
+)
 }
 \arguments{
 \item{my_dt}{data.table input}

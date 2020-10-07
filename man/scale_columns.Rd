@@ -4,10 +4,15 @@
 \alias{scale_columns}
 \title{Scales data.table columns.}
 \usage{
-scale_columns(my_dt = NULL, col_names = NULL,
+scale_columns(
+  my_dt = NULL,
+  col_names = NULL,
   my_summary = "Scale the data by column.",
-  sample_key = get_default_sample_key(), should_scale = TRUE,
-  should_center = TRUE, readme_path = NULL)
+  sample_key = get_default_sample_key(),
+  should_scale = TRUE,
+  should_center = TRUE,
+  readme_path = NULL
+)
 }
 \arguments{
 \item{my_dt}{data.table input}

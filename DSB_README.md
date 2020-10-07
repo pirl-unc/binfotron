@@ -6,7 +6,7 @@ In R:
 ``` r
 devtools::install_github("DanteBortone/housekeeping") # if needed
 
-housekeeping::assemble_package(package_name = "binfotron", my_version = "0.3-18", 
+housekeeping::assemble_package(package_name = "binfotron", my_version = "0.3-19", 
   my_dir = "/datastore/nextgenout5/share/labs/Vincent_Lab/members/dbortone/rstudio-common/packages/binfotron", 
   should_build = FALSE)
 ```

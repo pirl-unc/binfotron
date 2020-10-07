@@ -4,16 +4,26 @@
 \alias{model_regression}
 \title{performs the specified regression on the data}
 \usage{
-model_regression(input_dt, indep_list,
-  base_file_name = "regression_output", clear_readme = TRUE,
-  combined_group_name = "All", dep_vars = NULL,
-  dep_var_families = NULL, event_col = "OS_e", fdr_by_columns = NULL,
-  fdr_by_columns_for_model_comp = NULL, fdr_method = "BH",
-  inclusion_list = list(), model_comparison_list = NULL,
-  model_function = function(dep_var = "", indep_vars = "NULL") {    
-  paste0("glm(", dep_var, " ~ ", paste0(indep_vars, collapse = " + "),
-  ", data = model_dt)") }, my_grouping = NULL, output_dir = ".",
-  time_col = "OS_d")
+model_regression(
+  input_dt,
+  indep_list,
+  base_file_name = "regression_output",
+  clear_readme = TRUE,
+  combined_group_name = "All",
+  dep_vars = NULL,
+  dep_var_families = NULL,
+  event_col = "OS_e",
+  fdr_by_columns = NULL,
+  fdr_by_columns_for_model_comp = NULL,
+  fdr_method = "BH",
+  inclusion_list = list(),
+  model_comparison_list = NULL,
+  model_function = function(dep_var = "", indep_vars = "NULL") {     paste0("glm(",
+    dep_var, " ~ ", paste0(indep_vars, collapse = " + "), ", data = model_dt)") },
+  my_grouping = NULL,
+  output_dir = ".",
+  time_col = "OS_d"
+)
 }
 \arguments{
 \item{input_dt}{A data.table that includes all columns of data needed to do the 

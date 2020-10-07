@@ -4,8 +4,13 @@
 \alias{calc_fdr}
 \title{Performs an FDR calculation on the fdr_on_columns.}
 \usage{
-calc_fdr(my_dt, fdr_by_columns = NULL, fdr_method = "BH",
-  fdr_on_columns = "pValue", readme_path = NULL)
+calc_fdr(
+  my_dt,
+  fdr_by_columns = NULL,
+  fdr_method = "BH",
+  fdr_on_columns = "pValue",
+  readme_path = NULL
+)
 }
 \arguments{
 \item{my_dt}{A data.table or data.frame that includes all columns of data needed to do the 

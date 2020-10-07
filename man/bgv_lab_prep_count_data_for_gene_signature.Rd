@@ -27,6 +27,7 @@ bgv_lab_prep_count_data_for_gene_signature
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 \seealso{
-Other gene_signature: \code{\link{calculate_gene_signatures}}
+Other gene_signature: 
+\code{\link{calculate_gene_signatures}()}
 }
 \concept{gene_signature}
