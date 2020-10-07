@@ -4,8 +4,13 @@
 \alias{pvalue_stars}
 \title{Turns pvalue into stars}
 \usage{
-pvalue_stars(p.value, barely_sig = 0.05, decent_sig = 0.01,
-  whoa_nelly = 0.001, bluh = "")
+pvalue_stars(
+  p.value,
+  barely_sig = 0.05,
+  decent_sig = 0.01,
+  whoa_nelly = 0.001,
+  bluh = ""
+)
 }
 \arguments{
 \item{p.value}{decimal pvalue}

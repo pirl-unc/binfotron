@@ -4,9 +4,13 @@
 \alias{calc_impres}
 \title{Calculate an IMPRES score}
 \usage{
-calc_impres(ge_df, ckpt_pair_df = default_ckpt_pairs(),
-  gene_element = 1, require_all_genes = TRUE,
-  sample_key = get_default_sample_key())
+calc_impres(
+  ge_df,
+  ckpt_pair_df = default_ckpt_pairs(),
+  gene_element = 1,
+  require_all_genes = TRUE,
+  sample_key = get_default_sample_key()
+)
 }
 \arguments{
 \item{ge_df}{Gene expression data.frame or data.table. Each column is a gene, each row is a sample.

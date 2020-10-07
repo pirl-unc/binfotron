@@ -4,8 +4,12 @@
 \alias{operatable_columns}
 \title{Determines what column names can be operated upon.}
 \usage{
-operatable_columns(col_names = NULL, my_dt, acceptable_classes = NULL,
-  sample_key = "Sample_ID")
+operatable_columns(
+  col_names = NULL,
+  my_dt,
+  acceptable_classes = NULL,
+  sample_key = "Sample_ID"
+)
 }
 \arguments{
 \item{col_names}{Vector of character strings to name the columns that will have this 

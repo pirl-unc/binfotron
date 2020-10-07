@@ -4,41 +4,65 @@
 \alias{view_boxplot}
 \title{Create a boxplot of analysis results.}
 \usage{
-view_boxplot(base_title = NULL, feature_names = NULL,
-  matched_col = NULL, input_dt = NULL, grouping_col = NULL,
-  add_sample_counts = TRUE, axis_text_y = "Gene Signature Expression",
-  boxplot_color = NULL, boxplot_fill = NULL, boxplot_width = 0.9,
-  display_stars = TRUE, fdr_method = "BH",
-  feature_strip_position = "bottom", graph_max = 4, graph_min = -4,
-  legend_name = NULL, my_position_dodge = 0.9, my_subtitle = NULL,
-  number_of_rows = 2, order_features = NULL, point_alpha = 1,
-  point_color = NULL, point_fill = NULL, point_shape = 20,
-  point_size = 0.2, pValue_decimal_places = 4,
+view_boxplot(
+  base_title = NULL,
+  feature_names = NULL,
+  matched_col = NULL,
+  input_dt = NULL,
+  grouping_col = NULL,
+  add_sample_counts = TRUE,
+  axis_text_y = "Gene Signature Expression",
+  boxplot_color = NULL,
+  boxplot_fill = NULL,
+  boxplot_width = 0.9,
+  display_stars = TRUE,
+  fdr_method = "BH",
+  feature_strip_position = "bottom",
+  graph_max = 4,
+  graph_min = -4,
+  legend_name = NULL,
+  my_position_dodge = 0.9,
+  my_subtitle = NULL,
+  number_of_rows = 2,
+  order_features = NULL,
+  point_alpha = 1,
+  point_color = NULL,
+  point_fill = NULL,
+  point_shape = 20,
+  point_size = 0.2,
+  pValue_decimal_places = 4,
   remove_feature_underscores = TRUE,
   scale_color_manual_values = "black",
   scale_fill_manual_values = gg_color_hue(5),
-  show_box_and_violin_legend = TRUE, show_point_legend = FALSE,
-  show_violins = TRUE, star_text_size = 4, star_text_vjust = 0.4,
-  star_y_position = graph_max * 0.9, show_points = TRUE,
-  outlier_color = NA, outlier_size = 1, violin_scale = "width",
-  violin_alpha = 1, violin_color = NA, violin_line_width = 1,
-  x_axis_line_size = 0, ggplot_theme = theme(legend.key.height =
-  unit(1, "line"), legend.key.width = unit(1, "line"), legend.position =
-  "top", legend.justification = "center", legend.key.size = unit(0.1,
-  "in"), axis.text.y = element_text(size = 9), axis.title.y =
-  element_text(size = 12), plot.subtitle = element_text(size = 8, hjust =
-  0.5, face = "italic"), plot.title = element_text(size = 18, face =
-  "bold", hjust = 0.5), legend.text = element_text(size = 9), legend.title
-  = element_text(size = 11), axis.text.x = element_blank(), axis.line.x =
-  element_blank(),      axis.ticks.x = element_blank(), axis.line.y =
-  element_line(size = 0.5), axis.ticks.y = element_line(size = 0.5),
-  panel.spacing.x = unit(2, "mm"), panel.spacing.y = unit(0, "mm"),
-  strip.background = element_rect(fill = NA), strip.text.x =
-  element_text(size = 8, hjust = 1, vjust = 0.5, margin = margin(0.1, 0,
-  0.4, 0, "cm"), angle = 90), panel.grid.minor = element_blank(),
-  panel.grid.major.x = element_blank(), panel.grid.major.y =
-  element_line(colour = "lightgrey", size = 0.5), panel.background =
-  element_rect(fill = "white",          colour = "white")))
+  show_box_and_violin_legend = TRUE,
+  show_point_legend = FALSE,
+  show_violins = TRUE,
+  star_text_size = 4,
+  star_text_vjust = 0.4,
+  star_y_position = graph_max * 0.9,
+  show_points = TRUE,
+  outlier_color = NA,
+  outlier_size = 1,
+  violin_scale = "width",
+  violin_alpha = 1,
+  violin_color = NA,
+  violin_line_width = 1,
+  x_axis_line_size = 0,
+  ggplot_theme = theme(legend.key.height = unit(1, "line"), legend.key.width = unit(1,
+    "line"), legend.position = "top", legend.justification = "center", legend.key.size =
+    unit(0.1, "in"), axis.text.y = element_text(size = 9), axis.title.y =
+    element_text(size = 12), plot.subtitle = element_text(size = 8, hjust = 0.5, face =
+    "italic"), plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    legend.text = element_text(size = 9), legend.title = element_text(size = 11),
+    axis.text.x = element_blank(), axis.line.x = element_blank(),      axis.ticks.x =
+    element_blank(), axis.line.y = element_line(size = 0.5), axis.ticks.y =
+    element_line(size = 0.5), panel.spacing.x = unit(2, "mm"), panel.spacing.y = unit(0,
+    "mm"), strip.background = element_rect(fill = NA), strip.text.x = element_text(size =
+    8, hjust = 1, vjust = 0.5, margin = margin(0.1, 0, 0.4, 0, "cm"), angle = 90),
+    panel.grid.minor = element_blank(), panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(colour = "lightgrey", size = 0.5), panel.background
+    = element_rect(fill = "white",          colour = "white"))
+)
 }
 \arguments{
 \item{add_sample_counts}{Boolean to indicate whether the groupings should show the sample count next to them.}

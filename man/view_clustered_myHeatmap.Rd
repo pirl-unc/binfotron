@@ -4,13 +4,27 @@
 \alias{view_clustered_myHeatmap}
 \title{Create a heatmap of analysis results.}
 \usage{
-view_clustered_myHeatmap(my_pack = NULL, sample_names = NULL,
-  groups = NULL, input_df = NULL, base_title = NULL,
-  base_file_name = NULL, output_dir = NULL, pdf_metadata = NULL,
-  models_argument_list = NULL, imported_annotation = NULL,
-  t.colors = NA, fileName = "cluster.cdt", linkage = "complete",
-  distance = "pearson", contrast = 2, returnSampleClust = F,
-  rowNames = NA, rightMar = 7, bottomMar = 1)
+view_clustered_myHeatmap(
+  my_pack = NULL,
+  sample_names = NULL,
+  groups = NULL,
+  input_df = NULL,
+  base_title = NULL,
+  base_file_name = NULL,
+  output_dir = NULL,
+  pdf_metadata = NULL,
+  models_argument_list = NULL,
+  imported_annotation = NULL,
+  t.colors = NA,
+  fileName = "cluster.cdt",
+  linkage = "complete",
+  distance = "pearson",
+  contrast = 2,
+  returnSampleClust = F,
+  rowNames = NA,
+  rightMar = 7,
+  bottomMar = 1
+)
 }
 \arguments{
 \item{my_pack}{A named list for analysis modules to send parameters to the view function in a 

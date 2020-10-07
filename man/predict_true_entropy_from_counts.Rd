@@ -4,8 +4,11 @@
 \alias{predict_true_entropy_from_counts}
 \title{predict_true_entropy_from_counts}
 \usage{
-predict_true_entropy_from_counts(my_counts, min_abundance = 2,
-  should_screen_counts = TRUE)
+predict_true_entropy_from_counts(
+  my_counts,
+  min_abundance = 2,
+  should_screen_counts = TRUE
+)
 }
 \arguments{
 \item{my_counts}{vector of postive integers}
@@ -21,16 +24,18 @@ Modeled prediction of diversity
 Uses an elastic net model to predict true Shannon entropy (ie Shannon entropy at an abundance of 100 million).  Two models are used to cover different abundance ranges.  2-1024 is one model 1025-65536 is another.  Lastly, if the abundance and Shannon entropy are over a threshhold predetermined to produce results within 95% of the true Shannon entropy the data are not modeled and Shannon entropy is returned. Of note these models were trained on an entropy range between 0.98 and 8.11.  If your corrected entropy values are often outside of this range this model may not be appropriate for your dataset.  Consider using the \link[binfotron]{predict_true_entropy_from_diversity} if you have the following diversity metrics already calculated: abundance, richness, d25, Shannon entropy, evenness, inv_simpson, chao1.
 }
 \seealso{
-Other diversity: \code{\link{chao1}},
-  \code{\link{dXX_index}}, \code{\link{evenness}},
-  \code{\link{get_corrected_entropy_rdata_2_4096_path}},
-  \code{\link{get_corrected_entropy_rdata_4097_65536_path}},
-  \code{\link{get_corrected_entropy_rdata_ab1025_65K_ent1_8_path}},
-  \code{\link{get_corrected_entropy_rdata_ab8_1024_ent1_8_path}},
-  \code{\link{has_sufficient_abundance_for_entropy}},
-  \code{\link{inv_simpson}},
-  \code{\link{predict_true_entropy_from_diversity}},
-  \code{\link{screen_counts}},
-  \code{\link{shannon_entropy}}
+Other diversity: 
+\code{\link{chao1}()},
+\code{\link{dXX_index}()},
+\code{\link{evenness}()},
+\code{\link{get_corrected_entropy_rdata_2_4096_path}()},
+\code{\link{get_corrected_entropy_rdata_4097_65536_path}()},
+\code{\link{get_corrected_entropy_rdata_ab1025_65K_ent1_8_path}()},
+\code{\link{get_corrected_entropy_rdata_ab8_1024_ent1_8_path}()},
+\code{\link{has_sufficient_abundance_for_entropy}()},
+\code{\link{inv_simpson}()},
+\code{\link{predict_true_entropy_from_diversity}()},
+\code{\link{screen_counts}()},
+\code{\link{shannon_entropy}()}
 }
 \concept{diversity}

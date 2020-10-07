@@ -4,10 +4,15 @@
 \alias{drop_low_columns}
 \title{Drop my_dt columns are below a certain percentile in value.}
 \usage{
-drop_low_columns(my_dt = NULL, col_names = NULL, col_value = median,
+drop_low_columns(
+  my_dt = NULL,
+  col_names = NULL,
+  col_value = median,
   my_summary = "Drop low expressing columns.",
-  sample_key = get_default_sample_key(), percentile_cutoff = 10,
-  readme_path = NULL)
+  sample_key = get_default_sample_key(),
+  percentile_cutoff = 10,
+  readme_path = NULL
+)
 }
 \arguments{
 \item{my_dt}{data.table input}
