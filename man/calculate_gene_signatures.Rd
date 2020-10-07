@@ -7,23 +7,14 @@
 calculate_gene_signatures(
   my_dt = NULL,
   gene_cols = NULL,
-<<<<<<< HEAD
-  gene_element = 2,
-=======
   gene_element = 1,
->>>>>>> 0f15335346e040e4d7a17c1429b75222bde6c4cf
   gmt_file_path,
   min_genes = 1,
   my_fun = median,
  
     my_summary = "Gene signatures by default are the median of the genes listed in the signature for each sample.",
-<<<<<<< HEAD
-  only_return_signatures = FALSE,
-  output_path = NULL,
-=======
   only_return_signatures = TRUE,
   summary_output_path = NULL,
->>>>>>> 0f15335346e040e4d7a17c1429b75222bde6c4cf
   sample_key = get_default_sample_key(),
   signatures = NULL,
   readme_path = NULL,
