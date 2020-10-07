@@ -529,7 +529,8 @@ model_regression = function(
         output_list["pValue"] = coef_mtrx[coef_index, pValue_column]
         output_list["Coef"] = coef_mtrx[coef_index, "coef"] %>% as.numeric
         
-        output_list["N"] =  paste0(my_model$nevent, ":", my_model$n - my_model$nevent)# events:non-events
+        output_list["Events"] =  paste0(my_model$nevent)# events:non-events
+        output_list["Non_Events"] =  paste0(my_model$n - my_model$nevent)# events:non-events
         
         output_list["Hazard_Ratio"] = summary(my_model)$coefficients[coef_index, "exp(coef)"] %>% as.numeric
         

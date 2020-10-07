@@ -78,7 +78,7 @@ model_differential_expression = function(
   design_var = NULL,
   gene_expression_cols = NULL,
   gmt_file_fdr_cutoffs = c(0.2, 0.05),
-  gmt_file_pvalue_cutoffs = c(0.01),
+  gmt_file_pvalue_cutoffs = c(0.05),
   gmt_ref = "Gene signature created from custom analysis.",
   imported_annotation = NULL,
   my_grouping = NULL,
@@ -307,11 +307,11 @@ model_differential_expression = function(
           linerized_names = paste0(names(fold_by_names), collapse = "")
           is_id = grepl("^[[:digit:]]+$", linerized_names)
           names_or_ids = ifelse(is_id, "ids", "names")
-          gene_set_base_name = paste0(base_file_name, "_", stats_col, "_", gmt_cutoff)# , "_sig_genes"
+          gene_set_base_name = paste0(base_file_name, "__", stats_col, "_", gmt_cutoff)# , "_sig_genes"
           up_genes = names(fold_by_names[fold_by_names > 1])
           down_genes = names(fold_by_names[fold_by_names < 1])
           if(length(up_genes) > 0){
-            gene_set_name = paste0(gene_set_base_name, "_sig_up_genes")
+            gene_set_name = paste0(gene_set_base_name, "__up")
             if(is_id){
               id_gmt_file_output = c(id_gmt_file_output, paste0(c(gene_set_name, gmt_ref, paste0(up_genes, collapse = "\t")), collapse = "\t"))
             } else {
@@ -319,7 +319,7 @@ model_differential_expression = function(
             }
           }
           if(length(down_genes) > 0){
-            gene_set_name = paste0(gene_set_base_name, "_sig_down_genes")
+            gene_set_name = paste0(gene_set_base_name, "__down")
             if(is_id){
               id_gmt_file_output = c(id_gmt_file_output, paste0(c(gene_set_name, gmt_ref, paste0(down_genes, collapse = "\t")), collapse = "\t"))
             } else {

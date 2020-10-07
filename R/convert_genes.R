@@ -48,7 +48,7 @@ create_gene_lookup = function(
   cat(paste0("Each input mapped to average of ", fwd_mean," output(s)", "\n"))
   cat(paste0("Each output mapped to average of ", rev_mean," input(s)", "\n"))
   
-  if(is.null(sep_value)){
+  if(is.null(sep)){
     output_values = tapply(return_values[[2]], return_values[[1]], function(x){
       x = x[!is.na(x)]
       return(x[1])
@@ -101,7 +101,7 @@ convert_gmt_file = function(
     db_object = org.Hs.eg.db
   }
   
-  gmt_lines = readLines(gmt_path)
+  gmt_lines = readLines(input_path)
   all_genes = c()
   combined_list = list()
   max_sig_length = 0
@@ -135,7 +135,7 @@ convert_gmt_file = function(
     input_readme_path = list.files(dirname(input_path), pattern = "readme", ignore.case = TRUE, full.names = TRUE)[1]
   }
   
-  readme_notes = paste0("Started with gmt file last modified on ", my_info , " from source: ", input_path)
+  readme_notes = paste0("Started with gmt file: ", input_path)
   readme_notes = c(readme_notes, "")
   if(!is.na(input_readme_path)){
     readme_notes = c(readme_notes, housekeeping::import_annotation(input_readme_path))

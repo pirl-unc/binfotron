@@ -4,10 +4,15 @@
 \alias{normalize_rows_by_quartile}
 \title{Normalize data values across rows by quartile}
 \usage{
-normalize_rows_by_quartile(my_dt = NULL, col_names = NULL,
+normalize_rows_by_quartile(
+  my_dt = NULL,
+  col_names = NULL,
   my_summary = "Upper-quartile normalizing data across rows.",
-  norm_factor = 1000, percentile = 75,
-  sample_key = get_default_sample_key(), readme_path = NULL)
+  norm_factor = 1000,
+  percentile = 75,
+  sample_key = get_default_sample_key(),
+  readme_path = NULL
+)
 }
 \arguments{
 \item{my_dt}{data.table input}

@@ -4,9 +4,14 @@
 \alias{round_data}
 \title{Round data.table columns}
 \usage{
-round_data(my_dt = NULL, col_names = NULL, digits = 0,
-  my_summary = "Rounding data.", sample_key = get_default_sample_key(),
-  readme_path = NULL)
+round_data(
+  my_dt = NULL,
+  col_names = NULL,
+  digits = 0,
+  my_summary = "Rounding data.",
+  sample_key = get_default_sample_key(),
+  readme_path = NULL
+)
 }
 \arguments{
 \item{my_dt}{data.table input}

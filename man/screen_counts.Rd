@@ -17,16 +17,18 @@ converted to numerics correctly.
 screen_counts
 }
 \seealso{
-Other diversity: \code{\link{chao1}},
-  \code{\link{dXX_index}}, \code{\link{evenness}},
-  \code{\link{get_corrected_entropy_rdata_2_4096_path}},
-  \code{\link{get_corrected_entropy_rdata_4097_65536_path}},
-  \code{\link{get_corrected_entropy_rdata_ab1025_65K_ent1_8_path}},
-  \code{\link{get_corrected_entropy_rdata_ab8_1024_ent1_8_path}},
-  \code{\link{has_sufficient_abundance_for_entropy}},
-  \code{\link{inv_simpson}},
-  \code{\link{predict_true_entropy_from_counts}},
-  \code{\link{predict_true_entropy_from_diversity}},
-  \code{\link{shannon_entropy}}
+Other diversity: 
+\code{\link{chao1}()},
+\code{\link{dXX_index}()},
+\code{\link{evenness}()},
+\code{\link{get_corrected_entropy_rdata_2_4096_path}()},
+\code{\link{get_corrected_entropy_rdata_4097_65536_path}()},
+\code{\link{get_corrected_entropy_rdata_ab1025_65K_ent1_8_path}()},
+\code{\link{get_corrected_entropy_rdata_ab8_1024_ent1_8_path}()},
+\code{\link{has_sufficient_abundance_for_entropy}()},
+\code{\link{inv_simpson}()},
+\code{\link{predict_true_entropy_from_counts}()},
+\code{\link{predict_true_entropy_from_diversity}()},
+\code{\link{shannon_entropy}()}
 }
 \concept{diversity}

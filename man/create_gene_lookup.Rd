@@ -4,8 +4,13 @@
 \alias{create_gene_lookup}
 \title{Create gene lookup}
 \usage{
-create_gene_lookup(input_values, input_type, output_type, sep = "\\t",
-  db_object = NULL)
+create_gene_lookup(
+  input_values,
+  input_type,
+  output_type,
+  sep = "\\t",
+  db_object = NULL
+)
 }
 \arguments{
 \item{input_values}{Character vecter of names to lookup}

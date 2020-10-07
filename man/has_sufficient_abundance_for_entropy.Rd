@@ -21,16 +21,18 @@ of reads needed to get within the 95th CI of the entropy at 100 billion reads.
 See Optimize_Diversity_Metrics_CRSV1371 project file, plot_fraction_entropy.R.
 }
 \seealso{
-Other diversity: \code{\link{chao1}},
-  \code{\link{dXX_index}}, \code{\link{evenness}},
-  \code{\link{get_corrected_entropy_rdata_2_4096_path}},
-  \code{\link{get_corrected_entropy_rdata_4097_65536_path}},
-  \code{\link{get_corrected_entropy_rdata_ab1025_65K_ent1_8_path}},
-  \code{\link{get_corrected_entropy_rdata_ab8_1024_ent1_8_path}},
-  \code{\link{inv_simpson}},
-  \code{\link{predict_true_entropy_from_counts}},
-  \code{\link{predict_true_entropy_from_diversity}},
-  \code{\link{screen_counts}},
-  \code{\link{shannon_entropy}}
+Other diversity: 
+\code{\link{chao1}()},
+\code{\link{dXX_index}()},
+\code{\link{evenness}()},
+\code{\link{get_corrected_entropy_rdata_2_4096_path}()},
+\code{\link{get_corrected_entropy_rdata_4097_65536_path}()},
+\code{\link{get_corrected_entropy_rdata_ab1025_65K_ent1_8_path}()},
+\code{\link{get_corrected_entropy_rdata_ab8_1024_ent1_8_path}()},
+\code{\link{inv_simpson}()},
+\code{\link{predict_true_entropy_from_counts}()},
+\code{\link{predict_true_entropy_from_diversity}()},
+\code{\link{screen_counts}()},
+\code{\link{shannon_entropy}()}
 }
 \concept{diversity}

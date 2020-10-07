@@ -4,8 +4,11 @@
 \alias{convert_na_to_zeroes}
 \title{Converts the NA in a data.table or data.frame to zeroes.}
 \usage{
-convert_na_to_zeroes(my_dt, my_summary = "Convert NA to zeroes.",
-  readme_path = NULL)
+convert_na_to_zeroes(
+  my_dt,
+  my_summary = "Convert NA to zeroes.",
+  readme_path = NULL
+)
 }
 \arguments{
 \item{my_dt}{Input data.table or data.frame}
