@@ -22,12 +22,8 @@ model_regression(
     dep_var, " ~ ", paste0(indep_vars, collapse = " + "), ", data = model_dt)") },
   my_grouping = NULL,
   output_dir = ".",
-<<<<<<< HEAD
-  time_col = "OS_d"
-=======
   time_col = "OS_d",
   write_files = TRUE
->>>>>>> 0f15335346e040e4d7a17c1429b75222bde6c4cf
 )
 }
 \arguments{

@@ -26,11 +26,8 @@ Other gene_signatures:
 \code{\link{get_gene_set_entrez_human_bgvlab_path}()},
 \code{\link{get_gene_set_entrez_human_c2_path}()},
 \code{\link{get_gene_set_entrez_human_kegg_path}()},
-<<<<<<< HEAD
-=======
 \code{\link{get_gene_set_hgnc_human_bgvlab_path}()},
 \code{\link{get_gene_set_hgnc_human_c2cp_path}()},
->>>>>>> 0f15335346e040e4d7a17c1429b75222bde6c4cf
 \code{\link{get_gene_set_hgnc_human_cta_path}()},
 \code{\link{get_gene_set_hgnc_human_kegg_path}()}
 }
