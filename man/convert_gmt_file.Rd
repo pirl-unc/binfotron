@@ -4,8 +4,15 @@
 \alias{convert_gmt_file}
 \title{Create gene lookup}
 \usage{
-convert_gmt_file(input_path, input_type, output_type, output_path,
-  db_object = NULL, na_string = "NA", input_readme_path = NULL)
+convert_gmt_file(
+  input_path,
+  input_type,
+  output_type,
+  output_path,
+  db_object = NULL,
+  na_string = "NA",
+  input_readme_path = NULL
+)
 }
 \arguments{
 \item{input_path}{Path to the gmt file you would like ot convert.}

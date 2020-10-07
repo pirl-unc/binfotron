@@ -5,10 +5,15 @@
 \title{Drop my_dt columns that aren't present in certain percentage_of_samples according
   to requirement function}
 \usage{
-require_data_in_samples(my_dt = NULL, col_names = NULL,
-  my_summary = "Require data in smaples", percentage_of_samples = 75,
+require_data_in_samples(
+  my_dt = NULL,
+  col_names = NULL,
+  my_summary = "Require data in smaples",
+  percentage_of_samples = 75,
   requirement = function(x) {     sum(x > 0) },
-  sample_key = get_default_sample_key(), readme_path = NULL)
+  sample_key = get_default_sample_key(),
+  readme_path = NULL
+)
 }
 \arguments{
 \item{my_dt}{data.table input}

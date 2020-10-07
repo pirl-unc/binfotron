@@ -4,12 +4,22 @@
 \alias{calculate_gene_signatures}
 \title{Calculate gene signatures on my_dt using a gmt file.}
 \usage{
-calculate_gene_signatures(my_dt = NULL, gene_cols = NULL,
-  gene_element = 1, gmt_file_path, min_genes = 1, my_fun = median,
-  my_summary = "Gene signatures by default are the median of the genes listed in the signature for each sample.",
-  only_return_signatures = TRUE, summary_output_path = NULL,
-  sample_key = get_default_sample_key(), signatures = NULL,
-  readme_path = NULL, na_remove = TRUE)
+calculate_gene_signatures(
+  my_dt = NULL,
+  gene_cols = NULL,
+  gene_element = 1,
+  gmt_file_path,
+  min_genes = 1,
+  my_fun = median,
+ 
+    my_summary = "Gene signatures by default are the median of the genes listed in the signature for each sample.",
+  only_return_signatures = TRUE,
+  summary_output_path = NULL,
+  sample_key = get_default_sample_key(),
+  signatures = NULL,
+  readme_path = NULL,
+  na_remove = TRUE
+)
 }
 \arguments{
 \item{my_dt}{data.table input}
@@ -57,7 +67,15 @@ gene signture can be changed using \code{my_fun}
 calculate_gene_signatures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
+\section{Todos}{
+
+\itemize{
+  \item Should convert a data.frame to a data.table and then convert it back for the output.
+}
+}
+
 \seealso{
-Other gene_signature: \code{\link{bgv_lab_prep_count_data_for_gene_signature}}
+Other gene_signature: 
+\code{\link{bgv_lab_prep_count_data_for_gene_signature}()}
 }
 \concept{gene_signature}

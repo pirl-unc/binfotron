@@ -4,9 +4,14 @@
 \alias{convert_piped_col_names_to_single_names}
 \title{Convert piped column names into one of the elements of the name.}
 \usage{
-convert_piped_col_names_to_single_names(my_dt = NULL, col_names = NULL,
-  my_summary = NULL, position = 2,
-  sample_key = get_default_sample_key(), readme_path = NULL)
+convert_piped_col_names_to_single_names(
+  my_dt = NULL,
+  col_names = NULL,
+  my_summary = NULL,
+  position = 2,
+  sample_key = get_default_sample_key(),
+  readme_path = NULL
+)
 }
 \arguments{
 \item{my_dt}{data.table input}
