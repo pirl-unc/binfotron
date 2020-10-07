@@ -43,6 +43,25 @@ get_gene_set_entrez_human_bgvlab_path = function(){
   }
 
 
+#' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' get_gene_set_hgnc_human_bgvlab_path
+#' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @title get_gene_set_hgnc_human_bgvlab_path 
+#' 
+#' @description 
+#' Returns the path to the symbol, human, BGVLab signatures in the package library.
+#' 
+#' @param none
+#' 
+#' @return A path to the gmt file.
+#' 
+#' @family gene_signatures
+#' 
+#' @export
+get_gene_set_hgnc_human_bgvlab_path = function(){
+  return(system.file(file.path("gene_sets", "symbol", "human", "BGVLab", "hgnc_human_bgvlab.gmt.txt"), package = "binfotron"))
+}
+
 
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' get_gene_set_entrez_human_kegg_path
@@ -104,6 +123,27 @@ get_gene_set_entrez_human_c2_path = function(){
   
   return(system.file("gene_sets", "entrez_ids", "human", "MSigDB", "human_c2_v5p1.rdata", package = "binfotron"))
 }
+
+
+#' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' get_gene_set_hgnc_human_c2cp_path
+#' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @title get_gene_set_hgnc_human_c2cp_path 
+#' 
+#' @description 
+#' Returns the path to the entrez_id, human, c2 signatures in the package library.
+#' 
+#' @param none
+#' 
+#' @return A path to the human_c2_v5p1.rdata file.
+#' 
+#' @family gene_signatures
+#' 
+#' @export
+get_gene_set_hgnc_human_c2cp_path = function(){
+  return(system.file("gene_sets", "symbol", "human", "c2cp", "c2.cp.v6.0.symbols.gmt.txt", package = "binfotron"))
+}
+
 
 
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -174,7 +214,7 @@ get_corrected_entropy_rdata_4097_65536_path = function(){
 #' @title get_corrected_entropy_rdata_ab8_1024_ent1_8_path 
 #' 
 #' @description 
-#' Returns the path to the corrected entropy model for abundances in the range of 1025-65536.
+#' Returns the path to the corrected entropy model for abundances in the range of 8-1024
 #' 
 #' @return A path to the RData file
 #' 

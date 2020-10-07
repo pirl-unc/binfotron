@@ -7,14 +7,23 @@
 calculate_gene_signatures(
   my_dt = NULL,
   gene_cols = NULL,
+<<<<<<< HEAD
   gene_element = 2,
+=======
+  gene_element = 1,
+>>>>>>> 0f15335346e040e4d7a17c1429b75222bde6c4cf
   gmt_file_path,
   min_genes = 1,
   my_fun = median,
  
     my_summary = "Gene signatures by default are the median of the genes listed in the signature for each sample.",
+<<<<<<< HEAD
   only_return_signatures = FALSE,
   output_path = NULL,
+=======
+  only_return_signatures = TRUE,
+  summary_output_path = NULL,
+>>>>>>> 0f15335346e040e4d7a17c1429b75222bde6c4cf
   sample_key = get_default_sample_key(),
   signatures = NULL,
   readme_path = NULL,
@@ -44,7 +53,7 @@ to my_dt.}
 should be included in the result.  Gene columns will be dropped.  This is helpful in 
 returning categories with the gene signature scores}
 
-\item{output_path}{If specified this is where the summary data for making this gene 
+\item{summary_output_path}{If specified this is where the summary data for making this gene 
 signature will go.}
 
 \item{sample_key}{Character string to specify the column that is the sample key. This 
@@ -67,6 +76,13 @@ gene signture can be changed using \code{my_fun}
 calculate_gene_signatures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
+\section{Todos}{
+
+\itemize{
+  \item Should convert a data.frame to a data.table and then convert it back for the output.
+}
+}
+
 \seealso{
 Other gene_signature: 
 \code{\link{bgv_lab_prep_count_data_for_gene_signature}()}
