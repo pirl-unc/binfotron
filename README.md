@@ -13,5 +13,17 @@ Or for a specific version:
 devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.3-17")
 ```
 
+You will likely also need our housekeeping package:
+``` r
+ devtools::install_github("Benjamin-Vincent-Lab/housekeeping")
+```
+
+Use the package documentation for help:
+``` r
+??binfotron
+??binfotron::predict_true_entropy_from_counts
+```
+
+
 # Previous location
 https://bitbucket.org/unc_lineberger/binfotron/
