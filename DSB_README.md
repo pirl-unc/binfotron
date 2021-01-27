@@ -6,7 +6,7 @@ In R:
 ``` r
 devtools::install_github("DanteBortone/housekeeping") # if needed
 
-housekeeping::assemble_package(package_name = "binfotron", my_version = "0.3-20", 
+housekeeping::assemble_package(package_name = "binfotron", my_version = "0.4-00", 
   my_dir = "/datastore/nextgenout5/share/labs/Vincent_Lab/members/dbortone/rstudio-common/packages/binfotron", 
   should_build = FALSE)
 ```
@@ -15,9 +15,9 @@ housekeeping::assemble_package(package_name = "binfotron", my_version = "0.3-20"
 In bash:
 ``` bash
 cd /datastore/nextgenout5/share/labs/Vincent_Lab/members/dbortone/rstudio-common/packages/binfotron
-my_comment="Updated description version."
+my_comment="This was a big change in that the housekeeping package dependency was removed and the primary key, Sample_ID, was changed to Run_ID."
 git commit -am "$my_comment"; git push
-git tag -a 0.3-19 -m "$my_comment"; git push -u origin --tags
+git tag -a 0.4-00 -m "$my_comment"; git push -u origin --tags
 ```
 
 ## Install
@@ -29,5 +29,5 @@ devtools::install_github("Benjamin-Vincent-Lab/binfotron")
 
 Or for a specific version:
 ``` r
-devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.3-18")
+devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.4-00")
 ```

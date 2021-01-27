@@ -20,7 +20,7 @@ model_differential_expression(
   imported_annotation = NULL,
   my_grouping = NULL,
   output_dir,
-  sample_key_col = "Sample_ID"
+  sample_key_col = "Run_ID"
 )
 }
 \arguments{

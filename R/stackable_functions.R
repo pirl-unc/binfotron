@@ -18,7 +18,7 @@
 #' 
 #' @export
 get_default_sample_key = function(){
-  return("Sample_ID")
+  return("Run_ID")
   }
 
 
