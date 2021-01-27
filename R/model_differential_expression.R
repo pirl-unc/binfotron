@@ -83,7 +83,7 @@ model_differential_expression = function(
   imported_annotation = NULL,
   my_grouping = NULL,
   output_dir,
-  sample_key_col = "Sample_ID"
+  sample_key_col = "Run_ID"
 ) {
   
   my_script = "model_differential_expression.R"
@@ -160,7 +160,7 @@ model_differential_expression = function(
   
   # DO NOT CHANGE THE ORDER OR NUMBER OF ROWS AFTER THIS POINT!!!!!!!!!!!!!!!!!
   
-  display_names = clin_dat$Sample_ID
+  display_names = clin_dat[[sample_key_col]]
   
   rownames(gene_dat) = display_names
   

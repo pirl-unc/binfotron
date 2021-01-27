@@ -71,7 +71,7 @@ operatable_columns = function(
   col_names = NULL,
   my_dt,
   acceptable_classes = NULL,
-  sample_key = "Sample_ID"
+  sample_key = "Run_ID"
 ){
   
   if(is.null(col_names)){
