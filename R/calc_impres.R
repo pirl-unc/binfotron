@@ -21,10 +21,16 @@ default_ckpt_pairs = function(){
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' @title Calculate an IMPRES score
 #' 
+#' @description The IMPRES score was created by this study: https://www.nature.com/articles/s41591-018-0157-9.  
+#' Where melanoma patients on with higher IMPRES scores had better survival when treated with ICI 
+#' across multiple datasets. A score of 1 means that - out of all of the pairs of genes in ckpt_pair_dt - in only 
+#' one case was the expression of the first gene higher than the second.  2 means that 2 pairs were 
+#' higher in the first gene than the second. Etc... NA's in gene expression will be treated as zeroes.
+#' 
 #' @param ge_df Gene expression data.frame or data.table. Each column is a gene, each row is a sample.
 #'   Must include the sample column indicated by \code{sample_key}.
 #' @param id_list List of all sample IDs, list order matches row order in gene expression matrix
-#' @param ckpt_pair_df optional data frame with user defined gene comparisons
+#' @param ckpt_pair_dt optional data frame with user defined gene comparisons
 #' @param require_all_genes Boolean to indicate if the function should proceed if some genes are missing.
 #' @param sample_key Character string to specify the column that is the sample key.
 #' @param gene_element For gene names that have a pipe in them, which position should be used ("1|2 etc"). Integer.
@@ -34,7 +40,7 @@ default_ckpt_pairs = function(){
 #' @export
 calc_impres = function(
   ge_df,
-  ckpt_pair_df = default_ckpt_pairs(),
+  ckpt_pair_dt = default_ckpt_pairs(),
   gene_element = 1,
   require_all_genes = TRUE,
   sample_key = get_default_sample_key()
@@ -54,17 +60,17 @@ calc_impres = function(
     stop(paste0(sample_key, " must be a column in ge_df."))
   }
   
-  if ( "data.frame" %ni% class(ckpt_pair_df) || 
-       "data.table" %ni% class(ckpt_pair_df) ){
-    stop("ckpt_pair_df must be a data.table or data.frame.")
+  if ( "data.frame" %ni% class(ckpt_pair_dt) || 
+       "data.table" %ni% class(ckpt_pair_dt) ){
+    stop("ckpt_pair_dt must be a data.table or data.frame.")
   }
-  ckpt_pair_df = as.data.frame(ckpt_pair_df)
+  ckpt_pair_dt = as.data.frame(ckpt_pair_dt)
 
   # get the first part of the names in case these are piped-names 
   names(ge_df) = sapply(names(ge_df), function(x){strsplit(x, '|', fixed = TRUE)[[1]][gene_element]}) %>% as.character()
   
   # check for missing genes first, and list all the ones that are missing
-  all_genes = unlist(ckpt_pair_df)
+  all_genes = unlist(ckpt_pair_dt)
   missing_genes = all_genes[all_genes %ni% names(ge_df)]
   
   if (length(missing_genes) > 0){
@@ -74,9 +80,9 @@ calc_impres = function(
     } else {
       # drop the missing rows
       cat("Proceeding without the missing gene(s).\n")
-      rows_of_missing_genes = unique(c(which(ckpt_pair_df[[1]] == missing_genes), which(ckpt_pair_df[[2]] == missing_genes)))
-      ckpt_pair_df = ckpt_pair_df[-rows_of_missing_genes,]
-      if (nrow(ckpt_pair_df) == 0) stop("You have no valid gene pair combinations to compute a score.")
+      rows_of_missing_genes = unique(c(which(ckpt_pair_dt[[1]] == missing_genes), which(ckpt_pair_dt[[2]] == missing_genes)))
+      ckpt_pair_dt = ckpt_pair_dt[-rows_of_missing_genes,]
+      if (nrow(ckpt_pair_dt) == 0) stop("You have no valid gene pair combinations to compute a score.")
     }
   }
   
@@ -86,13 +92,32 @@ calc_impres = function(
   return_df %<>% data.frame()
 
   for (sample_index in 1:nrow(ge_df)){
-    for (pair_index in 1:nrow(ckpt_pair_df)) {
-      gene1 = ckpt_pair_df[[1]][pair_index]
-      gene2 = ckpt_pair_df[[2]][pair_index]
+    for (pair_index in 1:nrow(ckpt_pair_dt)) {
+      gene1 = ckpt_pair_dt[[1]][pair_index]
+      gene2 = ckpt_pair_dt[[2]][pair_index]
       gene1_value = ge_df[[gene1]][sample_index]
       gene2_value = ge_df[[gene2]][sample_index]
-      if(gene1_value > gene2_value) 
-        return_df[sample_index,2] = return_df[[2]][sample_index] + 1
+      
+      # compare the genes
+      my_value = return_df[sample_index,2]
+      my_value = tryCatch({
+        if(gene1_value > gene2_value) {
+          my_value + 1
+        } else {
+          my_value
+        }
+      },
+        error=function(cond){
+          if(is.na(gene1_value)) gene1_value = 0
+          if(is.na(gene2_value)) gene2_value = 0
+          if(gene1_value > gene2_value) {
+            my_value + 1
+          } else {
+            NA
+          }
+        }
+      )
+      return_df[sample_index,2] = my_value
     }
   }
   

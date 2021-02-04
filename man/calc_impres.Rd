@@ -6,7 +6,7 @@
 \usage{
 calc_impres(
   ge_df,
-  ckpt_pair_df = default_ckpt_pairs(),
+  ckpt_pair_dt = default_ckpt_pairs(),
   gene_element = 1,
   require_all_genes = TRUE,
   sample_key = get_default_sample_key()
@@ -16,7 +16,7 @@ calc_impres(
 \item{ge_df}{Gene expression data.frame or data.table. Each column is a gene, each row is a sample.
 Must include the sample column indicated by \code{sample_key}.}
 
-\item{ckpt_pair_df}{optional data frame with user defined gene comparisons}
+\item{ckpt_pair_dt}{optional data frame with user defined gene comparisons}
 
 \item{gene_element}{For gene names that have a pipe in them, which position should be used ("1|2 etc"). Integer.}
 
@@ -30,5 +30,9 @@ Must include the sample column indicated by \code{sample_key}.}
 Returns data frame/table with 2 columns: sample ID & IMPRES score
 }
 \description{
-Calculate an IMPRES score
+The IMPRES score was created by this study: https://www.nature.com/articles/s41591-018-0157-9.  
+Where melanoma patients on with higher IMPRES scores had better survival when treated with ICI 
+across multiple datasets. A score of 1 means that - out of all of the pairs of genes in ckpt_pair_dt - in only 
+one case was the expression of the first gene higher than the second.  2 means that 2 pairs were 
+higher in the first gene than the second. Etc... NA's in gene expression will be treated as zeroes.
 }
