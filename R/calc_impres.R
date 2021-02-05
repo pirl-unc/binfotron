@@ -88,10 +88,11 @@ calc_impres = function(
   
   
   return_df = ge_df[, sample_key, with = FALSE]
-  return_df$IMPRES_Score = 0
+  return_df$IMPRES_Score = NA
   return_df %<>% data.frame()
 
   for (sample_index in 1:nrow(ge_df)){
+    my_value = 0
     for (pair_index in 1:nrow(ckpt_pair_dt)) {
       gene1 = ckpt_pair_dt[[1]][pair_index]
       gene2 = ckpt_pair_dt[[2]][pair_index]
@@ -99,7 +100,7 @@ calc_impres = function(
       gene2_value = ge_df[[gene2]][sample_index]
       
       # compare the genes
-      my_value = return_df[sample_index,2]
+
       my_value = tryCatch({
         if(gene1_value > gene2_value) {
           my_value + 1
@@ -113,12 +114,12 @@ calc_impres = function(
           if(gene1_value > gene2_value) {
             my_value + 1
           } else {
-            NA
+            my_value
           }
         }
       )
-      return_df[sample_index,2] = my_value
-    }
+    }      
+    return_df$IMPRES_Score[sample_index] = my_value
   }
   
 
