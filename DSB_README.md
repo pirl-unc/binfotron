@@ -6,7 +6,7 @@ In R:
 ``` r
 devtools::install_github("DanteBortone/housekeeping") # if needed
 
-housekeeping::assemble_package(package_name = "binfotron", my_version = "0.4-03", 
+housekeeping::assemble_package(package_name = "binfotron", my_version = "0.4-10", 
   my_dir = "/datastore/nextgenout5/share/labs/Vincent_Lab/members/dbortone/rstudio-common/packages/binfotron", 
   should_build = FALSE)
 ```
@@ -15,10 +15,10 @@ housekeeping::assemble_package(package_name = "binfotron", my_version = "0.4-03"
 In bash:
 ``` bash
 cd /datastore/nextgenout5/share/labs/Vincent_Lab/members/dbortone/rstudio-common/packages/binfotron
-my_comment="Made tweak to calc_impres handling of NA errors."
+my_comment="Added Vincent_Plasma_Cells gene signature to bgvlab hgnc and entrez gene sets."
 git add .
 git commit -am "$my_comment"; git push
-git tag -a 0.4-03 -m "$my_comment"; git push -u origin --tags
+git tag -a 0.4-10 -m "$my_comment"; git push -u origin --tags
 ```
 
 ## Install
@@ -30,5 +30,5 @@ devtools::install_github("Benjamin-Vincent-Lab/binfotron")
 
 Or for a specific version:
 ``` r
-devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.4-03")
+devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.4-10")
 ```
