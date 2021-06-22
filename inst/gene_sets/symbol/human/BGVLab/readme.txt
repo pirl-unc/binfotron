@@ -1,4 +1,5 @@
-Started with gmt file last modified on 2020-04-09 14:00:01 from source: /home/dbortone/R/x86_64-pc-linux-gnu-library/3.5/binfotron/gene_sets/entrez_ids/human/BGVLab/BGVLab_entrez_human.gmt.txt
+Started with gmt file last modified on 2020-04-09 14:00:01 from source: 
+/home/dbortone/R/x86_64-pc-linux-gnu-library/3.5/binfotron/gene_sets/entrez_ids/human/BGVLab/BGVLab_entrez_human.gmt.txt
 
 > BGVLab_IDs contains gene signatures used by the Vincent Lab to assess human
 > immune gene signatures. They have been assembled from the following sources:  
@@ -18,4 +19,42 @@ Started with gmt file last modified on 2020-04-09 14:00:01 from source: /home/db
 >   Roufas C et al. Front Oncol 2018
 >   And Gene Ontology terms
 
-On Mon Apr 20 07:41:58 PM 2020 converted the gmt file from ENTREZID to SYMBOL using binfotron::convert_gmt_file v0.3.1
+On Mon Apr 20 07:41:58 PM 2020 converted the gmt file from ENTREZID to SYMBOL 
+using binfotron::convert_gmt_file v0.3.1
+
+
+20210622 - We were able to do 1:1 mapping of transcripts using the gtf file.
+
+We were loosing about 6.7% of our Vincent Lab genes due to missing the genes in 
+our transcriptome -> hgnc conversion
+After the corrections this dropped to 0.9% (some just couldn't be tracked down)
+We were loosing another 5.5% when we restricted ourselves to protein_coding genes
+So by going to the new hngc gene signatures we'll go from around 13% of the genes 
+missing to 0.9%.
+
+To get the most genes for your signatures here we recommend using Ensembl 
+transcript ids and matching to HGNC symbols not to these entrez id signatures. 
+Additionally virtually all gene biotypes need to be used to get all of these 
+genes. 
+
+
+Genes biotype found using hgnc ids:
+
+      protein_coding                    3443
+      lncRNA                              93
+      IG_V_gene                           14
+      IG_C_gene                           11
+      snoRNA                               9
+      transcribed_unprocessed_pseudogene   8
+      snRNA                                6
+      transcribed_unitary_pseudogene       5
+      TR_C_gene                            5
+      TR_V_gene                            4
+      IG_V_pseudogene                      4
+      unprocessed_pseudogene               2
+      processed_pseudogene                 2
+      polymorphic_pseudogene               2
+      transcribed_processed_pseudogene     1
+      TR_V_pseudogene                      1
+      IG_J_gene                            1
+      IG_C_pseudogene                      1
