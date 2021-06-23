@@ -1,3 +1,5 @@
+Repo: human_hgnc_cta v0.1-00
+
 raw_CTA_hgnc.gmt.txt was originally made by the project BCR_CRSV892 with the script, CTA_assembly.R.
 
 Cancer_Testes_Antigens	http://www.cta.lncc.br/index.php

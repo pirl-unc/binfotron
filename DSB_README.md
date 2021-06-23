@@ -6,7 +6,7 @@ In R:
 ``` r
 devtools::install_github("DanteBortone/housekeeping") # if needed
 
-housekeeping::assemble_package(package_name = "binfotron", my_version = "0.5-00", 
+housekeeping::assemble_package(package_name = "binfotron", my_version = "0.5-01", 
   my_dir = "/datastore/nextgenout5/share/labs/Vincent_Lab/members/dbortone/rstudio-common/packages/binfotron", 
   should_build = FALSE)
 ```
@@ -15,10 +15,10 @@ housekeeping::assemble_package(package_name = "binfotron", my_version = "0.5-00"
 In bash:
 ``` bash
 cd /datastore/nextgenout5/share/labs/Vincent_Lab/members/dbortone/rstudio-common/packages/binfotron
-my_comment="Updated human, hgnc gene signatures for bgvlab and cta to map genes more effectively."
+my_comment="Updated readmes on gmts to include the version of the repo that made them."
 git add .
 git commit -am "$my_comment"; git push
-git tag -a 0.5-00 -m "$my_comment"; git push -u origin --tags
+git tag -a 0.5-01 -m "$my_comment"; git push -u origin --tags
 ```
 
 ## Install
