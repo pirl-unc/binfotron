@@ -308,6 +308,7 @@ model_differential_expression = function(
           is_id = grepl("^[[:digit:]]+$", linerized_names)
           names_or_ids = ifelse(is_id, "ids", "names")
           gene_set_base_name = paste0(base_file_name, "__", stats_col, "_", gmt_cutoff)# , "_sig_genes"
+          gene_set_base_name = gsub("-","_",gene_set_base_name)
           up_genes = names(fold_by_names[fold_by_names > 1])
           down_genes = names(fold_by_names[fold_by_names < 1])
           if(length(up_genes) > 0){
