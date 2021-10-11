@@ -294,11 +294,13 @@ model_differential_expression = function(
       # we are expecting an hgnc and entrez id seperated by a pipe but need to be ready for anything
       fold_by_col_1_names = sig_stats$Fold_Change
       names(fold_by_col_1_names) = sig_stats$Gene_Name %>% as.character()
+      fold_by_col_1_names = fold_by_col_1_names[names(fold_by_col_1_names) != "NA"]
       fold_by_col_1_names = fold_by_col_1_names[!is.na(names((fold_by_col_1_names)))]
       fold_by_col_1_names = fold_by_col_1_names[!duplicated(names(fold_by_col_1_names))]
       
       fold_by_col_2_names = sig_stats$Fold_Change
       names(fold_by_col_2_names) = sig_stats$Gene_ID %>% as.character()
+      fold_by_col_2_names = fold_by_col_2_names[names(fold_by_col_2_names) != "NA"]
       fold_by_col_2_names = fold_by_col_2_names[!is.na(names((fold_by_col_2_names)))]
       fold_by_col_2_names = fold_by_col_2_names[!duplicated(names(fold_by_col_2_names))]
       
