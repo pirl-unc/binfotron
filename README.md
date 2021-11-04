@@ -10,7 +10,7 @@ devtools::install_github("Benjamin-Vincent-Lab/binfotron")
 
 Or for a specific version:
 ``` r
-devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.4-10")
+devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.6-00")
 ```
 
 Use the package documentation for help:

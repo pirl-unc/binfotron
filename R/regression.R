@@ -1,11 +1,11 @@
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' model_regression
+#' regression
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #'
 #' @title performs the specified regression on the data
 #' 
 #' @description
-#' The purpose of \code{model_regression} is to perform a regression on the data 
+#' The purpose of \code{regression} is to perform a regression on the data 
 #' across the range of independant and dependant variables provided.  If m
 #' 
 #' @details
@@ -112,7 +112,7 @@
 #' @family model
 #' 
 #' @export
-model_regression = function(
+regression = function(
   input_dt,
   indep_list,
   base_file_name = "regression_output",

@@ -1,11 +1,11 @@
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' model_differential_expression
+#' differential_expression
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #'
 #' @title Does a differential gene expression analysis. 
 #' 
 #' @description
-#' The purpose of \code{model_differential_expression} is to compare the raw read counts of gene expression data 
+#' The purpose of \code{differential_expression} is to compare the raw read counts of gene expression data 
 #' between different groups of samples to see if there is differential gene expression. This is different from model_gene_expression in that this one 
 #' tries to incorporate the changes needed for the LCCC-Bioinformatics group to use. Dumping sam and edger here. Letting
 #' old Deseq (ie not deseq2) go for a bit until it's needed.
@@ -20,7 +20,6 @@
 #' @param deseq2_results_cooksCutoff Set to \code{Inf} or \code{FALSE} to disable the resetting of p-values to \code{NA}. 
 #'   Gets passed to \code{\link{DESeq2::results}} 'independentFiltering' argument
 #' @param deseq2_results_independentFiltering Gets passed to \code{\link{DESeq2::results}} 'cooksCutoff' argument
-#' @param design_var This needs to be setup to allow more complex comparisons and and matching for samples.
 #' @param gene_expression_cols Character vector with the names of the columns with genes in them.
 #' @param gmt_file_fdr_cutoffs Numeric vector of cutoffs to use for the FDR significant values.  Two gene signtures
 #'   will be made of all the genes that have under the fdr pValue: one for up genes and one for down.
@@ -67,7 +66,7 @@
 #' @family differential_expression, model
 #' 
 #' @export
-model_differential_expression = function(
+differential_expression = function(
   my_dt = NULL,
   analysis_method = "DESeq2",
   base_file_name = NULL,
@@ -75,7 +74,7 @@ model_differential_expression = function(
   core_number = round(detectCores()/2),
   deseq2_results_cooksCutoff = NULL, # Inf or FALSE to disable the resetting of p-values to NA
   deseq2_results_independentFiltering = TRUE,
-  design_var = NULL,
+  #design_var = NULL,
   gene_expression_cols = NULL,
   gmt_file_fdr_cutoffs = c(0.2, 0.05),
   gmt_file_pvalue_cutoffs = c(0.05),
@@ -83,10 +82,11 @@ model_differential_expression = function(
   imported_annotation = NULL,
   my_grouping = NULL,
   output_dir,
-  sample_key_col = "Run_ID"
+  sample_key_col = "Run_ID",
+  patient_key_col = NULL
 ) {
   
-  my_script = "model_differential_expression.R"
+  my_script = "differential_expression.R"
   
   my_annotation = paste0(analysis_method," analysis: ", my_script)
   a = function(new_text){
@@ -216,8 +216,8 @@ model_differential_expression = function(
     countTable = data.frame(countTable)
     rownames(countTable) = colnames(gene_dat)
     
-    if(!is.null(design_var)){
-      stop("design_var has not been setup yet.")
+    if(!is.null(patient_key_col)){
+      cat("Running a pairwise sample comparison.\n")
       # Mike Love was the source on doing a paired comparison: https://support.bioconductor.org/p/58893/
       dds = DESeqDataSetFromMatrix(countData = countTable, 
                                    colData = data.frame(conditions, Patient_ID = factor(clin_dat[[patient_key_col]])), 
@@ -263,6 +263,7 @@ model_differential_expression = function(
     
     # add DeSeq
     deseq2_coef = coef(dds)
+    deseq2_coef = deseq2_coef[,c(1,ncol(deseq2_coef))]
     colnames(deseq2_coef) = c("Deseq2_Intercept", "DeSeq2_Coef")
     deseq2_coef = data.frame(Gene_Combined_Name = rownames(deseq2_coef), deseq2_coef)
     rownames(deseq2_coef) = NULL
