@@ -67,6 +67,13 @@ gene signture can be changed using \code{my_fun}
 calculate_gene_signatures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
+\section{Todos}{
+
+\itemize{
+  \item Should convert a data.frame to a data.table and then convert it back for the output.
+}
+}
+
 \seealso{
 Other gene_signature: 
 \code{\link{bgv_lab_prep_count_data_for_gene_signature}()}
