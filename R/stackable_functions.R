@@ -378,7 +378,7 @@ normalize_rows_by_quartile = function(
 #' 
 #' @description
 #' Calculates normalization factors used for uq normalization.  Also calculates
-#' the number of genes that are over \code{min_reads} for QC purposes.
+#' the number of genes that are over min_reads for QC purposes.
 #' 
 #' @param col_names Vector of character strings to name the columns that will have this 
 #'   operation performed on them.  Uses \code{\link{operatable_columns}}
