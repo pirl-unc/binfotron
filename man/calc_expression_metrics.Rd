@@ -29,7 +29,7 @@ to my_dt.}
 
 \item{percentile}{Percentile to which the data will be normalized}
 
-\item{min_reads}{Vector of integers for expression to be over to calc % genes over those values}
+\item{min_reads}{Vector of integers for expression to be over to calc percentage of genes over those values}
 
 \item{sample_key}{Character string to specify the column that is the sample key. This 
 column will not be operated upon.}

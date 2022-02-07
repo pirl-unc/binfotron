@@ -387,7 +387,7 @@ normalize_rows_by_quartile = function(
 #'   to my_dt.
 #' @param norm_factor Number indicating the value to which the quartile is normalized
 #' @param percentile Percentile to which the data will be normalized
-#' @param min_reads Vector of integers for expression to be over to calc % genes over those values
+#' @param min_reads Vector of integers for expression to be over to calc percentage of genes over those values
 #' @param sample_key Character string to specify the column that is the sample key. This 
 #'   column will not be operated upon.
 #' @param readme_path Optional path to which the comments will be appended.
@@ -595,6 +595,11 @@ convert_piped_col_names_to_single_names = function(
 #' @param signatures Specifies which gene signtures on the gmt file will be used. If \code{NULL}
 #'   all of the signatures wil be used.
 #' @param readme_path Optional path to which the comments will be appended.
+#' 
+#' @section Todos:
+#' \itemize{
+#'   \item Should convert a data.frame to a data.table and then convert it back for the output.
+#' }
 #' 
 #' @family gene_signature
 #' 
