@@ -344,7 +344,7 @@ normalize_rows_by_quartile = function(
   sample_key = get_default_sample_key(),
   readme_path = NULL
 ){ # null will apply to all columns
-  function_name = "quartile_normalization"
+  function_name = "normalize_rows_by_quartile"
   
   
   previous_comments = attributes(my_dt)$comments
@@ -366,6 +366,72 @@ normalize_rows_by_quartile = function(
   } 
   
   return(my_dt)
+}
+
+
+
+#' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' calc_expression_metrics
+#' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' 
+#' @title Quantify expression metrics for qc purposes
+#' 
+#' @description
+#' Calculates normalization factors used for uq normalization.  Also calculates
+#' the number of genes that are over \code{min_reads} for QC purposes.
+#' 
+#' @param col_names Vector of character strings to name the columns that will have this 
+#'   operation performed on them.  Uses \code{\link{operatable_columns}}
+#' @param my_dt data.table input
+#' @param my_summary Character string to change the default comment that will be appended 
+#'   to my_dt.
+#' @param norm_factor Number indicating the value to which the quartile is normalized
+#' @param percentile Percentile to which the data will be normalized
+#' @param min_reads Vector of integers for expression to be over to calc % genes over those values
+#' @param sample_key Character string to specify the column that is the sample key. This 
+#'   column will not be operated upon.
+#' @param readme_path Optional path to which the comments will be appended.
+#' 
+#' @export
+calc_expression_metrics = function(
+  my_dt = NULL,
+  col_names = NULL,
+  my_summary = "Calculating expression normalization factors and % of genes with counts over min_reads for QC.",
+  norm_factor = 1000,
+  percentile = 75,
+  min_reads = c(0,1,4),
+  sample_key = get_default_sample_key(),
+  readme_path = NULL
+){ # null will apply to all columns
+  function_name = "calc_expression_metrics"
+  
+  previous_comments = attributes(my_dt)$comments
+  
+  text_output = make_intro_text(function_name, my_summary)
+  
+  col_names %<>% operatable_columns(my_dt, acceptable_classes = c("numeric", "integer"), sample_key = sample_key)
+  cat("Found columns\n")
+  
+  start_time = proc.time()[3]
+  
+  out_dt = my_dt[,sample_key, with = F]
+  out_dt$Norm_Factors = apply(my_dt[,.SD, .SDcols = col_names], 1, function(x){norm_factor/quantile(x[x>0],percentile/100, na.rm=T)})
+  
+  for(min_read in min_reads){
+    out_dt[[paste0("Pct_Counts_Over_", min_read)]] = apply(my_dt[,.SD, .SDcols = col_names], 1, function(x){100*sum(x>min_read, na.rm = T)/sum(x>=0, na.rm = T) })
+  }
+  
+  cat(paste0("Time for running ", function_name, ': ', proc.time()[3] - start_time))
+  cat("\n\n")
+  
+  
+  if(is.null(readme_path)){
+    attributes(out_dt)$comments = c(previous_comments, text_output, "")
+  } else {
+    write(text_output, readme_path, append = TRUE)
+  } 
+  
+  return(out_dt)
 }
 
 
