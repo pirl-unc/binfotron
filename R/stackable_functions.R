@@ -378,7 +378,7 @@ normalize_rows_by_quartile = function(
 #' 
 #' @description
 #' Calculates normalization factors used for uq normalization.  Also calculates
-#' the number of genes that are over min_reads for QC purposes.
+#' the number of genes that are over \code{min_reads} for QC purposes.
 #' 
 #' @param col_names Vector of character strings to name the columns that will have this 
 #'   operation performed on them.  Uses \code{\link{operatable_columns}}
@@ -595,11 +595,6 @@ convert_piped_col_names_to_single_names = function(
 #' @param signatures Specifies which gene signtures on the gmt file will be used. If \code{NULL}
 #'   all of the signatures wil be used.
 #' @param readme_path Optional path to which the comments will be appended.
-#' 
-#' @section Todos:
-#' \itemize{
-#'   \item Should convert a data.frame to a data.table and then convert it back for the output.
-#' }
 #' 
 #' @family gene_signature
 #' 
