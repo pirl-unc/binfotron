@@ -38,7 +38,7 @@ column will not be operated upon.}
 }
 \description{
 Calculates normalization factors used for uq normalization.  Also calculates
-the number of genes that are over min_reads for QC purposes.
+the number of genes that are over \code{min_reads} for QC purposes.
 }
 \details{
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
