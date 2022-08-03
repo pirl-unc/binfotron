@@ -388,25 +388,29 @@ regression = function(
       
       this_coef_data = my_model$data[[coefficient_name]]
       
-      
-      if(this_coef_data %>% is.null){  # this is coming from a category
-        # this is a category and we need to fix the name
-        found_it = FALSE
-        
-        for (x_index in 1:length(my_model$xlevels)){
-          my_var = names(my_model$xlevels)[x_index]
-          my_levels = my_model$xlevels[[x_index]]
-          for(my_level in my_levels[2:length(my_levels)]){
-            try_me = paste0(my_var, my_level)
-            if(try_me == coefficient_name){
-              found_it = TRUE
-              this_coef_data = my_model$data[[my_var]]
-              output_list["Coefficient_Name"] = paste0(my_var, ": ", my_level," vs ",my_levels[1]) # factors compare to the first factor by default
-              break
+      if (length(my_model$xlevels)> 0) {
+        if(this_coef_data %>% is.null){  # this is coming from a category
+          # this is a category and we need to fix the name
+          found_it = FALSE
+          
+          for (x_index in 1:length(my_model$xlevels)){
+            my_var = names(my_model$xlevels)[x_index]
+            my_levels = my_model$xlevels[[x_index]]
+            for(my_level in my_levels[2:length(my_levels)]){
+              try_me = paste0(my_var, my_level)
+              if(try_me == coefficient_name){
+                found_it = TRUE
+                this_coef_data = my_model$data[[my_var]]
+                output_list["Coefficient_Name"] = paste0(my_var, ": ", my_level," vs ",my_levels[1]) # factors compare to the first factor by default
+                break
+              }
             }
+            if(found_it) break
           }
-          if(found_it) break
         }
+      } else {
+        my_var = gsub("TRUE$", "", coefficient_name)
+        this_coef_data = my_model$data[[my_var]]
       }
       
       this_coef_data = this_coef_data[complete.cases(this_coef_data)]
