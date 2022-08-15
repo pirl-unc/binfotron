@@ -5,12 +5,13 @@ The purpose of this package is perform higher level statistical analyses on RNA-
 Restart R Session  
 In R:
 ``` r
+devtools::install_github("Benjamin-Vincent-Lab/housekeeping") # used by binfotron
 devtools::install_github("Benjamin-Vincent-Lab/binfotron")
 ```
 
 Or for a specific version:
 ``` r
-devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.6-00")
+devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.7.2")
 ```
 
 Use the package documentation for help:

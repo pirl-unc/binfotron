@@ -81,7 +81,8 @@
 #' @param fdr_method Passed to \code{\link{binfotron::calc_fdr}}. String to tell 
 #' what method to use to FDR correct. Must be one of the values in 
 #' \code{stats::p.adjust.methods}.
-#' @param write_files Boolean on whether you wuold like to write the output files.
+#' @param write_files Boolean on whether you would like to write the output files.
+#' @param save_models Boolean on whether you would like to save the models in individual rds files named <base_file_name>_<group_name>_<indep_list_name> .
 #' 
 #' @return List containing several outputs: 
 #' \enumerate{
@@ -133,7 +134,8 @@ regression = function(
   my_grouping = NULL, # "Tissue"
   output_dir = ".",
   time_col = "OS_d",
-  write_files = TRUE
+  write_files = TRUE,
+  save_models = FALSE
 ){
   
   library(checkmate)
@@ -194,6 +196,8 @@ regression = function(
   
   column_classes = sapply(1:ncol(input_dt), function(x){class(input_dt[[x]])})
   names(column_classes) = names(input_dt)
+  
+  output_models = list()
   
   if(grepl("coxph",model_function())){
     a("## Running coxph regression")
@@ -639,9 +643,9 @@ regression = function(
       if(my_grouping %in% unique(unlist(model_comparison_list))){
         if(show_group_in_model_warning){
           warning(paste0("The grouping is included in the model comparisons. ",
-                       "This will crash since it will only have one level when ",
-                       "the individual groups are run. Removing model comparison ",
-                       "that contain the grouping: ", my_grouping))
+                         "This will crash since it will only have one level when ",
+                         "the individual groups are run. Removing model comparison ",
+                         "that contain the grouping: ", my_grouping))
           show_group_in_model_warning = FALSE # no reason to show this more than once
         }
         doesnt_include_grouping = sapply(model_comparison_list, function(x){my_grouping %ni% x})
@@ -687,9 +691,9 @@ regression = function(
       }
       
       for (indep_index in 1:length(indep_list)){
-
+        
         model_dt = dep_var_dat[complete.cases(dep_var_dat[,unique(c(indep_list[[indep_index]], unlist(this_groups_model_comparison_list))), with = FALSE]),]
-
+        
         my_indep_name = names(indep_list)[indep_index]
         
         a(paste0("    - Independent variable: ", my_indep_name))
@@ -742,6 +746,12 @@ regression = function(
         } else {
           
           my_model = try_model$return_value
+          
+          model_name = paste0(my_group,"__",my_indep_name)
+          model_name %<>% gsub(" ", "_", .)
+          output_models[model_name] = list(my_model)
+          
+          if (save_models) saveRDS(model_name, file = file.path(output_dir, paste0(base_file_name, "_", model_name, "_model.rds")))
           
           my_dt = data.table(
             Independent = my_indep_name,
@@ -897,14 +907,14 @@ regression = function(
   
   if(fdr_method %in% p.adjust.methods[p.adjust.methods != "none"]){
     a("FDR correcting regression pValues.")
-
+    
     pvalue_dt = calc_fdr(  
-        my_dt = pvalue_dt,
-        fdr_by_columns = fdr_by_columns,
-        fdr_method = fdr_method,
-        fdr_on_columns = "pValue",
-        readme_path = readme_path
-      )
+      my_dt = pvalue_dt,
+      fdr_by_columns = fdr_by_columns,
+      fdr_method = fdr_method,
+      fdr_on_columns = "pValue",
+      readme_path = readme_path
+    )
   }
   
   if(write_files) fwrite(pvalue_dt, stats_path, quote = FALSE, sep = "\t", col.names = TRUE, na = "NA")
@@ -933,6 +943,6 @@ regression = function(
     a("")
     readme_content = readLines(readme_path)
     if(!write_files) file.remove(readme_path)
-    return(list(stats = pvalue_dt, readme = readme_content))
+    return(list(stats = pvalue_dt, readme = readme_content, models = output_models))
   }
 }

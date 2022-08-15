@@ -23,7 +23,8 @@ regression(
   my_grouping = NULL,
   output_dir = ".",
   time_col = "OS_d",
-  write_files = TRUE
+  write_files = TRUE,
+  save_models = FALSE
 )
 }
 \arguments{
@@ -113,7 +114,9 @@ the data into groups. If specified, this column needs to present in \code{input_
 \item{time_col}{For coxph.  The name of the column from which to draw the time 
 information.  If specified, this column needs to present in \code{input_dt}.}
 
-\item{write_files}{Boolean on whether you wuold like to write the output files.}
+\item{write_files}{Boolean on whether you would like to write the output files.}
+
+\item{save_models}{Boolean on whether you would like to save the models in individual rds files named <base_file_name>_<group_name>_<indep_list_name> .}
 }
 \value{
 List containing several outputs: 
