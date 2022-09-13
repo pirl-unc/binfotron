@@ -13,5 +13,5 @@ immune gene signatures. They have been assembled from the following sources:
   Chan et al PNAS 2009; PMID:19666525
   IPRES derrived Hugo/Lo 2016; PMID26997480
   Thorsson V et al. Immunity 2018; PMID: 29628290
-  Roufas C et al. Front Oncol 2018
+  Rooney MS et al. Cell 2015
   And Gene Ontology terms
