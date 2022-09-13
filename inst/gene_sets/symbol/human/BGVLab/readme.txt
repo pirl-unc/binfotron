@@ -18,7 +18,7 @@ Started with gmt file last modified on 2020-04-09 14:00:01 from source:
 >   Chan et al PNAS 2009; PMID:19666525
 >   IPRES derrived Hugo/Lo 2016; PMID26997480
 >   Thorsson V et al. Immunity 2018; PMID: 29628290
->   Roufas C et al. Front Oncol 2018
+>   Rooney MS et al. Cell 2015
 >   And Gene Ontology terms
 
 On Mon Apr 20 07:41:58 PM 2020 converted the gmt file from ENTREZID to SYMBOL 
