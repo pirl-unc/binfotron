@@ -1,5 +1,6 @@
-# dexp <- differential_expression(combined_df, gmt_file_fdr_cutoffs = c(0.001, 0.01), gmt_file_pvalue_cutoffs = 0.05, gene_expression_cols = gene_cols, my_grouping='Response', output_dir=file.path("./Desktop/work/vincent_lab/output"))
-
+#library(magrittr)
+#library(housekeeping)
+#dexp <- differential_expression(combined_df, gmt_file_fdr_cutoffs = c(0.001, 0.01), gmt_file_pvalue_cutoffs = 0.05, gene_expression_cols = gene_cols, my_grouping='Response', output_dir=file.path("./Desktop/work/vincent_lab/output"))
 # Notes from method cleanup by nwheeler, 10/11/22: 
 #   DONE * minor confusion in parameter descriptions ... cooksCutoff and independentFiltering descriptions were reversed
 #   DONE * analysis_method - looks like currently only DESeq2 is supported ... update parameter help?
@@ -13,8 +14,6 @@
 #   DONE * if output_dir is NULL, setting default path fails because get_analysis_dir method does not exist in binfotron or housekeeping
 #   
 #   DONE * add useful messaging for some failures such as no gene_expression_cols sent - otherwise there will be fairly cryptic errors
-#     * gene_expression_cols
-#     * sample_key_col
 #   DONE * convert compound function calls into %>% where possible?
 #   
 #   DONE * there is duplicate output folder creation
@@ -22,7 +21,8 @@
 #   SKIPPED * use housekeepings annotation method?
 #   DONE * also check for my_grouping in gene_expression_cols ( already removes sample_key_col )
 #   DONE * use padj from deseq results rather than independent call to p.adjust ( since they are the same thing)
-#   DONE * when outputting stats to text file, comment says outputting genes with pvalue < .05 but code to filter genes by said pvalue is commented out ... also should pvalue be that sent for gmt file or parameterized separately rather than hardcoded as .05?
+#           * reverted above change - output when using DESeq results padj vs. p.adjust(pValues) differs slightly ( got 1 additional gene with padj < .001 using the DESeq values ... not sure why since they call the same method with 'bh', so a different set/subset of pvalues must be passed )
+#   DONE * when outputting stats to text file, comment says outputting genes with pvalue < .05 but code to filter genes by said pvalue is commented out ... just changed the comment
 #   DONE * reference external methods with :: syntax, 
 #   * remove library() calls and add methods needed to Description and Namespace
 
@@ -172,6 +172,7 @@ differential_expression = function(
     gene_expression_cols <- colnames(my_dt)
     message(paste0("No gene_expression_cols sent. Trying analysis with all columns except ", sample_key_col, " and ", my_grouping,". If DESeqDataSets throws an error, you probably need to specify which columns are gene counts!"))
   }
+  
   gene_expression_cols = gene_expression_cols[gene_expression_cols %ni% c(sample_key_col, my_grouping)] # remove sample_key_col and my_grouping column from gene_expression_cols if they were included
   
   dat = my_dt %>% as.data.frame(); rm(my_dt)
@@ -189,6 +190,10 @@ differential_expression = function(
   if(length(absent_genes) > 0){
     warning(paste0("These ", length(absent_genes), " genes could not be found in the data:\n", paste0(absent_genes, collapse= ", ")))
     gene_expression_cols = gene_expression_cols[gene_expression_cols %ni% absent_genes]
+  }
+  
+  if( length(gene_expression_cols) == 0 ){
+    stop("After removing my_grouping, sample_key_col and any gene names that couldn't be found in my_dt, there were no gene_expression_cols remaining to analyze. Check that the values in gene_expression_cols match column names of gene data in my_dt.")
   }
   
   gene_dat = dat[gene_expression_cols]
@@ -246,7 +251,7 @@ differential_expression = function(
     a("Processing differential expression using DESeq2.")
     a("FDR corrected pValues are calculated using the Benjamin-Hochberg method.")
     
-    library(DESeq2)
+    #library(DESeq2)
     countTable = t(data.matrix(gene_dat)) %>% data.frame()
     #    countTable = data.frame(countTable)
     countTable %<>% round()
@@ -271,7 +276,7 @@ differential_expression = function(
     
     if ( core_number > 1 ){
       #      library("BiocParallel")
-      register(BiocParallel::MulticoreParam(core_number))
+      BiocParallel::register(BiocParallel::MulticoreParam(core_number))
     }
     
     #error case of one class already caught as exception at head of function
@@ -329,8 +334,6 @@ differential_expression = function(
     }
     for (gmt_cutoff in gmt_cutoffs){
       sig_stats = output_stats[which(output_stats[,stats_col]<=gmt_cutoff),]
-      print(paste0(stats_col, " ", gmt_cutoff, " : ", nrow(sig_stats)))
-      
       # need to figure out whether these are entrez id's or hgnc
       # we are expecting an hgnc and entrez id separated by a pipe but need to be ready for anything
       fold_by_col_1_names = sig_stats$Fold_Change
