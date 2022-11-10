@@ -18,8 +18,10 @@ regression(
   fdr_method = "BH",
   inclusion_list = list(),
   model_comparison_list = NULL,
-  model_function = function(dep_var = "", indep_vars = "NULL") {     paste0("glm(",
-    dep_var, " ~ ", paste0(indep_vars, collapse = " + "), ", data = model_dt)") },
+  model_function = function(dep_var = "", indep_vars = "NULL") {
+     paste0("glm(",
+    dep_var, " ~ ", paste0(indep_vars, collapse = " + "), ", data = model_dt)")
+ },
   my_grouping = NULL,
   output_dir = ".",
   time_col = "OS_d",

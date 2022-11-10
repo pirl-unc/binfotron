@@ -10,7 +10,9 @@ require_data_in_samples(
   col_names = NULL,
   my_summary = "Require data in smaples",
   percentage_of_samples = 75,
-  requirement = function(x) {     sum(x > 0) },
+  requirement = function(x) {
+     sum(x > 0)
+ },
   sample_key = get_default_sample_key(),
   readme_path = NULL
 )
