@@ -54,14 +54,16 @@ view_boxplot(
     element_text(size = 12), plot.subtitle = element_text(size = 8, hjust = 0.5, face =
     "italic"), plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
     legend.text = element_text(size = 9), legend.title = element_text(size = 11),
-    axis.text.x = element_blank(), axis.line.x = element_blank(),      axis.ticks.x =
+    axis.text.x = element_blank(), axis.line.x = element_blank(), 
+     axis.ticks.x =
     element_blank(), axis.line.y = element_line(size = 0.5), axis.ticks.y =
     element_line(size = 0.5), panel.spacing.x = unit(2, "mm"), panel.spacing.y = unit(0,
     "mm"), strip.background = element_rect(fill = NA), strip.text.x = element_text(size =
     8, hjust = 1, vjust = 0.5, margin = margin(0.1, 0, 0.4, 0, "cm"), angle = 90),
     panel.grid.minor = element_blank(), panel.grid.major.x = element_blank(),
     panel.grid.major.y = element_line(colour = "lightgrey", size = 0.5), panel.background
-    = element_rect(fill = "white",          colour = "white"))
+    = element_rect(fill = "white", 
+         colour = "white"))
 )
 }
 \arguments{

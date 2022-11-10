@@ -7,8 +7,8 @@
 calc_expression_metrics(
   my_dt = NULL,
   col_names = NULL,
- 
-    my_summary = "Calculating expression normalization factors and \% of genes with counts over min_reads for QC.",
+  my_summary =
+    "Calculating expression normalization factors and \% of genes with counts over min_reads for QC.",
   norm_factor = 1000,
   percentile = 75,
   min_reads = c(0, 1, 4),
