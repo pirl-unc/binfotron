@@ -62,8 +62,8 @@
 #' @param sample_key_col String matching the name of the column that should be used to identify the unique sample identifiers.
 #' @param patient_key_col String matching the name of the column that should be used to identify the unique patients. If included, pairwise sample comparison will be performed.
 #' @param low_gene_count_cutoff Numeric value indicating if/where to remove genes with low counts. Null will remove no genes.
-#' @param low_gene_count_method The column-wise summary method ( function reference, not character ) to use in determining gene count values to compare against
-#'   low_gene_count_cutoff. Defaults to colSums.
+#' @param low_gene_count_method The summary method to be used, applied to each gene column in my_dt ( function reference, not character ),
+#'   used to determine genes to be removed as below low_gene_count_cutoff. Defaults to max ( i.e. if largest count for given gene is below cutoff, exclude it ).
 #' @param gmt_file_log2fc_cutoffs Numeric vector of cutoffs to use for the log2 fold change for genes included in signatures. Up and down signatures
 #'   will be generated for each combination of log2fc, fdr and pvalue cutoffs. Defaults to c(0) which equates to no filtering by fold change.
 #'
@@ -120,7 +120,7 @@ differential_expression = function(
     sample_key_col = "Run_ID",
     patient_key_col = NULL,
     low_gene_count_cutoff = NULL,
-    low_gene_count_method = colSums,
+    low_gene_count_method = max,
     gmt_file_log2fc_cutoffs = c(0)
 ) {
 
@@ -191,28 +191,36 @@ differential_expression = function(
   dat = dat[order(dat[,my_grouping]), ]
 
   # drop any extra levels that might be there
-  if(class(dat[[my_grouping]]) == "factor"){
+  if (class(dat[[my_grouping]]) == "factor"){
     dat[[my_grouping]] = factor(dat[[my_grouping]], levels = levels(dat[[my_grouping]])[levels(dat[[my_grouping]]) %in% dat[[my_grouping]]])
   }
 
   n_classes = factor(dat[,my_grouping]) %>% levels() %>% length()
 
   absent_genes = gene_expression_cols[gene_expression_cols %ni% names(dat)]
-  if(length(absent_genes) > 0){
+  if (length(absent_genes) > 0){
     warning(paste0("These ", length(absent_genes), " genes could not be found in the data:\n", paste0(absent_genes, collapse= ", ")))
     gene_expression_cols = gene_expression_cols[gene_expression_cols %ni% absent_genes]
   }
 
-  if( !is.null(low_gene_count_cutoff) ){
-    low_expression_genes <- low_gene_count_method(dat[gene_expression_cols], na.rm=T) %>% .[.<=low_gene_count_cutoff]
-    if( length(low_expression_genes) ){
+  if ( !is.null(low_gene_count_cutoff) ){
+    low_expression_genes <- mapply(function(gene_cts){
+      has_low_count <- low_gene_count_method(gene_cts, na.rm=T)
+      if ( identical(low_gene_count_method, range) ){
+        has_low_count %<>% diff()
+      }
+      has_low_count %<>% {. <= low_gene_count_cutoff}
+      return(has_low_count)
+    }, dat[gene_expression_cols]) %>% .[.]
+    #low_expression_genes <- low_gene_count_method(dat[gene_expression_cols], na.rm=T) %>% .[.<=low_gene_count_cutoff]
+    if ( length(low_expression_genes) ){
       a(paste("Removing", length(low_expression_genes), "genes with counts ( via specified low_gene_counts_method ) <=", low_gene_count_cutoff, "across all samples."))
       gene_expression_cols %<>% .[ . %ni% names(low_expression_genes) ]
     }
     rm(low_expression_genes)
   }
 
-  if( length(gene_expression_cols) == 0 ){
+  if ( length(gene_expression_cols) == 0 ){
     stop("After removing my_grouping, sample_key_col, any gene names that couldn't be found in my_dt, and low count genes ( if requested ), there were no gene_expression_cols remaining to analyze. Check that the values in gene_expression_cols match column names of gene data in my_dt.")
   }
 
@@ -383,7 +391,7 @@ differential_expression = function(
             up_genes = names(fold_by_names[fold_by_names > log2fc])
             down_genes = names(fold_by_names[fold_by_names < (log2fc*-1)])
 
-#            cat(full_gene_set_base_name, " has ", length(up_genes), " uppers and ", length(down_genes), " downers\n")
+            #            cat(full_gene_set_base_name, " has ", length(up_genes), " uppers and ", length(down_genes), " downers\n")
 
             if(length(up_genes) > 0){
               gene_set_name = paste0(full_gene_set_base_name, "__up")
@@ -478,7 +486,7 @@ differential_expression = function(
       colname_of_pValue = "pValue",
       colname_of_FDR = "FDR_pValue",
       my_annotation = my_annotation,
-      my_dt = output_stats %>% as.data.table(),
+      my_dt = output_stats %>% data.table::as.data.table(),
       ordered_factors = levels(conditions)[1:2],
       output_dir = output_dir
     )
