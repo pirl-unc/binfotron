@@ -41,7 +41,7 @@
 #' @details
 #' This function utilizes one of either \code{\link{DESeq}} or \code{\link{DESeq2}} methods.  \code{\link{DESeq}} is recommended for single cell data.
 #'
-#' @param my_dt Data table ( or data frame ) with gene counts as columns and samples as rows, incuding a grouping column with at least two groups and an id column ( key specified as sample_key_col parameter )
+
 #' @param analysis_method Eventually a string option out of the following choices:  DESeq2, DESeq, SAM, or edgeR indicating which method
 #'   should be used to do the analysis. Currently only DESeq2 is supported.
 #' @param base_file_name String to specify the file name.
@@ -52,21 +52,23 @@
 #' @param gene_expression_cols Character vector with the names of the columns with genes in them.
 #' @param gmt_file_fdr_cutoffs Numeric vector of cutoffs to use for the FDR significant values.  Two gene signatures
 #'   will be made of all the genes that have under the fdr pValue: one for up genes and one for down.
+#' @param gmt_file_log2fc_cutoffs Numeric vector of cutoffs to use for the log2 fold change for genes included in signatures. Up and down signatures
+#'   will be generated for each combination of log2fc, fdr and pvalue cutoffs. Defaults to c(0) which equates to no filtering by fold change.
 #' @param gmt_file_pvalue_cutoffs Numeric vector of cutoffs to use for the pValue significant values.  Two gene signatures
 #'   will be made of all the genes that have under the pValue: one for up genes and one for down.
 #' @param gmt_ref String indicating what should go in the reference part of the gmt file.
 #' @param imported_annotation Character vector to include what steps were done to the data prior to this analysis.  This module will
 #'   add on to those steps.
-#' @param my_grouping This string is the name of the column you want to use to split the data into groups.
-#' @param output_dir Path to the output directory.  This will be calculated automatically if left blank.
-#' @param sample_key_col String matching the name of the column that should be used to identify the unique sample identifiers.
-#' @param patient_key_col String matching the name of the column that should be used to identify the unique patients. If included, pairwise sample comparison will be performed.
 #' @param low_gene_count_cutoff Numeric value indicating if/where to remove genes with low counts. Null will remove no genes.
 #' @param low_gene_count_method The summary method to be used, applied to each gene column in my_dt ( function reference, not character ),
 #'   used to determine genes to be removed as below low_gene_count_cutoff. Defaults to max ( i.e. if largest count for given gene is below cutoff, exclude it ).
-#' @param gmt_file_log2fc_cutoffs Numeric vector of cutoffs to use for the log2 fold change for genes included in signatures. Up and down signatures
-#'   will be generated for each combination of log2fc, fdr and pvalue cutoffs. Defaults to c(0) which equates to no filtering by fold change.
-#'
+#' @param my_dt Data table ( or data frame ) with gene counts as columns and samples as rows, incuding a grouping column with at least two groups and an id column ( key specified as sample_key_col parameter )
+#' @param my_grouping This string is the name of the column you want to use to split the data into groups.
+#' @param output_dir Path to the output directory.  This will be calculated automatically if left blank.
+#' @param patient_key_col String matching the name of the column that should be used to identify the unique patients. If included, pairwise sample comparison will be performed.
+#' @param p_adjust_method String method name to pass to \code{\link{stats::p.adjust}} for FDR correction
+#' @param sample_key_col String matching the name of the column that should be used to identify the unique sample identifiers.
+
 #'
 #' @return List containing several outputs contains:
 #' \enumerate{
@@ -102,26 +104,26 @@
 #'
 #' @export
 differential_expression = function(
-    my_dt = NULL,
-    analysis_method = "DESeq2",
-    base_file_name = NULL,
-    base_title = NULL,
-    core_number = round(parallel::detectCores()/2),
-    deseq2_results_cooksCutoff = NULL, # Inf or FALSE to disable the resetting of p-values to NA
-    deseq2_results_independentFiltering = TRUE,
-    #design_var = NULL,
-    gene_expression_cols = NULL,
-    gmt_file_fdr_cutoffs = c(0.2, 0.05),
-    gmt_file_pvalue_cutoffs = c(0.05),
-    gmt_ref = "Gene signature created from custom analysis.",
-    imported_annotation = NULL,
-    my_grouping = NULL,
-    output_dir = NULL,
-    sample_key_col = "Run_ID",
-    patient_key_col = NULL,
-    low_gene_count_cutoff = NULL,
-    low_gene_count_method = max,
-    gmt_file_log2fc_cutoffs = c(0)
+  my_dt = NULL,
+  analysis_method = "DESeq2",
+  base_file_name = NULL,
+  base_title = NULL,
+  core_number = round(parallel::detectCores()/2),
+  deseq2_results_cooksCutoff = NULL,
+  deseq2_results_independentFiltering = TRUE,
+  gene_expression_cols = NULL,
+  gmt_file_log2fc_cutoffs = c(0),
+  gmt_file_fdr_cutoffs = c(0.2, 0.05),
+  gmt_file_pvalue_cutoffs = c(0.05),
+  gmt_ref = "Gene signature created from custom analysis.",
+  imported_annotation = NULL,
+  low_gene_count_cutoff = NULL,
+  low_gene_count_method = max,
+  my_grouping = NULL,
+  output_dir = NULL,
+  patient_key_col = NULL,
+  p_adjust_method = "BH",
+  sample_key_col = "Run_ID"
 ) {
 
   if(my_grouping %>% is.null || my_grouping %ni% colnames(my_dt) || my_dt[[my_grouping]] %>% unique() %>% length() < 2 ){
@@ -137,7 +139,6 @@ differential_expression = function(
   a = function(new_text){
     env = parent.env(environment())
     assign('my_annotation', c(get('my_annotation', envir = env), new_text), envir = env)
-    #cat(new_text, "\n\n")
   }
 
 
@@ -145,31 +146,13 @@ differential_expression = function(
     output_dir = file.path(housekeeping::get_script_dir_path())
     output_dir = file.path(output_dir, analysis_method)
     message("No output_dir sent. Defaulting to: ", output_dir, ".")
-    # dir.create(output_dir, showWarnings = FALSE) This is done further along in the code ... doesn't need to happen here
   }
 
   a(imported_annotation)
   a("")
 
-  # dat = import$dat
-  # rm(import)
-  # cat("Data loading complete.\n")
-
-  # if(matched_sample){
-  #   # samples that don't have a sample for each level of my_grouping are dropped
-  #   n_levels = length(levels(dat[[my_grouping]]))
-  #   for(this_individual in levels(dat[[patient_key_col]])){
-  #     subdat = dat[dat[[patient_key_col]] == this_individual,  ]
-  #     if(nrow(subdat) < n_levels){
-  #       dat = dat[dat[[patient_key_col]] != this_individual, ]
-  #     }
-  #   }
-  # }
-
-
   if(base_title %>% is.null() ){
-    base_title = paste0(analysis_method, " Analysis",
-                        " by ", my_grouping, '') #?what is the extra '' for?
+    base_title = paste0(analysis_method, " analysis by ", my_grouping)
   }
 
   if(base_file_name %>% is.null() ){
@@ -204,15 +187,23 @@ differential_expression = function(
   }
 
   if ( !is.null(low_gene_count_cutoff) ){
+  	# This block of code iterates over each column ( gene ) in dat and does the 
+  	#   summary function provided ( low_gene_count_method ) on that column. 
+  	# The summary value for each column is compared against the 
+  	#   low_gene_count_cutoff value and the mapply ultimately returns a vector 
+  	#   of booleans, one per gene, where True indicates a low count gene.
+  	# Then the .[.] selects the items from the mapply return which are true, 
+  	#   resulting in a named vector of TRUE values where the names are the genes 
+  	#   that should be removed due to being below the low count threshold.
     low_expression_genes <- mapply(function(gene_cts){
-      has_low_count <- low_gene_count_method(gene_cts, na.rm=T)
+      lowest_count <- low_gene_count_method(gene_cts, na.rm=T)
+      # If method was range, we take the difference between max and min.
       if ( identical(low_gene_count_method, range) ){
-        has_low_count %<>% diff()
+      	lowest_count %<>% diff()
       }
-      has_low_count %<>% {. <= low_gene_count_cutoff}
-      return(has_low_count)
+      return(lowest_count <= low_gene_count_cutoff)
     }, dat[gene_expression_cols]) %>% .[.]
-    #low_expression_genes <- low_gene_count_method(dat[gene_expression_cols], na.rm=T) %>% .[.<=low_gene_count_cutoff]
+
     if ( length(low_expression_genes) ){
       a(paste("Removing", length(low_expression_genes), "genes with counts ( via specified low_gene_counts_method ) <=", low_gene_count_cutoff, "across all samples."))
       gene_expression_cols %<>% .[ . %ni% names(low_expression_genes) ]
@@ -279,16 +270,14 @@ differential_expression = function(
     a("Processing differential expression using DESeq2.")
     a("FDR corrected pValues are calculated using the Benjamin-Hochberg method.")
 
-    #library(DESeq2)
     countTable = t(data.matrix(gene_dat)) %>% data.frame()
-    #    countTable = data.frame(countTable)
     countTable %<>% round()
 
     rownames(countTable) = colnames(gene_dat)
 
     if(!is.null(patient_key_col)){
       if( !patient_key_col %in% colnames(clin_dat)){
-        stop("The patient_key_col sent, is not an existing colname in my_dt. Analysis not run.")
+        stop(paste0("Error: The patient_key_col, ",patient_key_col,", could not be found in my_dt."))
       }
       cat("Running a pairwise sample comparison.\n")
       a(paste("Running a pairwise sample comparison on", patient_key_col, "column."))
@@ -303,7 +292,6 @@ differential_expression = function(
     }
 
     if ( core_number > 1 ){
-      #      library("BiocParallel")
       BiocParallel::register(BiocParallel::MulticoreParam(core_number))
     }
 
@@ -324,14 +312,13 @@ differential_expression = function(
 
     # not sure what to do with LRT data at this point...
 
-
     output_stats = data.frame(
       Gene_Combined_Name = rownames(res),
       Gene_Name = sapply(rownames(res), function(x){strsplit(x, '|', fixed = TRUE)[[1]][1]}) %>% as.character,
       Gene_ID = sapply(rownames(res), function(x){strsplit(x, '|', fixed = TRUE)[[1]][2]}) %>% as.character,
       Fold_Change = 2^res$log2FoldChange,
       Log2_Fold_Change = res$log2FoldChange,
-      FDR_pValue = p.adjust(res$pvalue, method = "BH"), #res$padj, #DESeq already provides adjusted pvalues via BH in results #p.adjust(res$pvalue, method = "BH"),
+      FDR_pValue = p.adjust(res$pvalue, method = p_adjust_method),
       pValue = res$pvalue
     )
 
@@ -343,10 +330,7 @@ differential_expression = function(
     rownames(deseq2_coef) = NULL
     output_stats = merge(output_stats, deseq2_coef, by = "Gene_Combined_Name")
 
-
-
     output_stats = output_stats[ output_stats$Fold_Change %>% order(decreasing = TRUE), ]
-
   }
 
   # make gmt output files
@@ -355,7 +339,7 @@ differential_expression = function(
   cat("Prepping gene signatures.\n")
   id_gmt_file_output = c()
   name_gmt_file_output = c()
-  custom_log2fc = (length(gmt_file_log2fc_cutoffs) > 1 || gmt_file_log2fc_cutoffs[1] > 0)
+  #only append log2fc value to gene name if specific values were requested
   for(stats_col in c("pValue", "FDR_pValue") ){
     if(stats_col == "pValue"){
       gmt_cutoffs = gmt_file_pvalue_cutoffs
@@ -382,17 +366,14 @@ differential_expression = function(
         if(sum(!is.na(names(fold_by_names))) > 0){ # if there are any names
           linerized_names = paste0(names(fold_by_names), collapse = "")
           is_id = grepl("^[[:digit:]]+$", linerized_names)
-          #          names_or_ids = ifelse(is_id, "ids", "names") # not used anywhere else ...
           gene_set_base_name = paste0(base_file_name, "__", stats_col, "_", gmt_cutoff) %>% gsub("-","_",.)
-          for( log2fc in gmt_file_log2fc_cutoffs ){
+          for( gmt_file_log2fc_cutoff in gmt_file_log2fc_cutoffs ){
             full_gene_set_base_name <- gene_set_base_name
-            #only append log2fc value if specific values were requested
-            if( custom_log2fc ) full_gene_set_base_name %<>% paste0("__log2fc_",log2fc)
-            up_genes = names(fold_by_names[fold_by_names > log2fc])
-            down_genes = names(fold_by_names[fold_by_names < (log2fc*-1)])
-
-            #            cat(full_gene_set_base_name, " has ", length(up_genes), " uppers and ", length(down_genes), " downers\n")
-
+            #only append gmt_file_log2fc_cutoff value if specific values were requested
+            if( gmt_file_log2fc_cutoff != 0 ) full_gene_set_base_name %<>% paste0("__log2fc_",gmt_file_log2fc_cutoff)
+            up_genes = names(fold_by_names[fold_by_names > gmt_file_log2fc_cutoff])
+            down_genes = names(fold_by_names[fold_by_names < (gmt_file_log2fc_cutoff*-1)])
+            
             if(length(up_genes) > 0){
               gene_set_name = paste0(full_gene_set_base_name, "__up")
               if(is_id){
