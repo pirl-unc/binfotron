@@ -437,7 +437,7 @@ differential_expression = function(
   #Remove Log2_Fold_Change which was only being used for filtering GMT outputs
   output_stats$Log2_Fold_Change <- NULL
 
-  stats_path = file.path(output_dir, paste0(base_file_name, ".stats.tsv"))
+  stats_path = file.path(output_dir, paste0(base_file_name, "_stats.tsv"))
   data.table::fwrite(output_stats[order(output_stats$pValue), ], stats_path, sep = "\t")
 
   # heatmap_pack = list(sample_names = clin_dat[[sample_key_col]],
@@ -478,7 +478,7 @@ differential_expression = function(
 
   a(paste0(" End of ", analysis_method," analysis") %>% housekeeping::as.footer())
 
-  annotation_path = file.path(output_dir, paste0(base_file_name, housekeeping::get_note_extension()))
+  annotation_path = file.path(output_dir, paste0(base_file_name, "_readme.txt"))
   write.table(my_annotation, annotation_path, quote = FALSE, sep = "\t", col.names = FALSE, row.names = FALSE)
 
   # rerun_path = file.path(output_dir, paste0(base_file_name, get_config_extension()))
