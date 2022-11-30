@@ -339,7 +339,6 @@ differential_expression = function(
   cat("Prepping gene signatures.\n")
   id_gmt_file_output = c()
   name_gmt_file_output = c()
-  #only append log2fc value to gene name if specific values were requested
   for(stats_col in c("pValue", "FDR_pValue") ){
     if(stats_col == "pValue"){
       gmt_cutoffs = gmt_file_pvalue_cutoffs
