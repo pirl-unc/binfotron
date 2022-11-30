@@ -9,65 +9,82 @@ differential_expression(
   analysis_method = "DESeq2",
   base_file_name = NULL,
   base_title = NULL,
-  core_number = round(detectCores()/2),
+  core_number = round(parallel::detectCores()/2),
   deseq2_results_cooksCutoff = NULL,
   deseq2_results_independentFiltering = TRUE,
   gene_expression_cols = NULL,
+  gmt_file_log2fc_cutoffs = c(0),
   gmt_file_fdr_cutoffs = c(0.2, 0.05),
   gmt_file_pvalue_cutoffs = c(0.05),
   gmt_ref = "Gene signature created from custom analysis.",
   imported_annotation = NULL,
+  low_gene_count_cutoff = NULL,
+  low_gene_count_method = max,
   my_grouping = NULL,
-  output_dir,
-  sample_key_col = "Run_ID",
-  patient_key_col = NULL
+  output_dir = NULL,
+  patient_key_col = NULL,
+  p_adjust_method = "BH",
+  sample_key_col = "Run_ID"
 )
 }
 \arguments{
-\item{analysis_method}{String option out of the following choices:  DESeq2, DESeq, SAM, or edgeR. Indicating which method
-should be used to do the analysis.}
+\item{my_dt}{Data table ( or data frame ) with gene counts as columns and samples as rows, incuding a grouping column with at least two groups and an id column ( key specified as sample_key_col parameter )}
+
+\item{analysis_method}{Eventually a string option out of the following choices:  DESeq2, DESeq, SAM, or edgeR indicating which method
+should be used to do the analysis. Currently only DESeq2 is supported.}
 
 \item{base_file_name}{String to specify the file name.}
 
-\item{core_number}{Integer to indicate the numboer of cores that should be used.}
+\item{core_number}{Integer to indicate the number of cores that should be used.}
 
-\item{deseq2_results_cooksCutoff}{Set to \code{Inf} or \code{FALSE} to disable the resetting of p-values to \code{NA}. 
-Gets passed to \code{\link{DESeq2::results}} 'independentFiltering' argument}
+\item{deseq2_results_cooksCutoff}{Set to \code{Inf} or \code{FALSE} to disable the resetting of p-values to \code{NA}.
+Gets passed to \code{\link{DESeq2::results}} 'cooksCutoff' argument}
 
-\item{deseq2_results_independentFiltering}{Gets passed to \code{\link{DESeq2::results}} 'cooksCutoff' argument}
+\item{deseq2_results_independentFiltering}{Gets passed to \code{\link{DESeq2::results}} 'independentFiltering' argument}
 
 \item{gene_expression_cols}{Character vector with the names of the columns with genes in them.}
 
-\item{gmt_file_fdr_cutoffs}{Numeric vector of cutoffs to use for the FDR significant values.  Two gene signtures
+\item{gmt_file_log2fc_cutoffs}{Numeric vector of cutoffs to use for the log2 fold change for genes included in signatures. Up and down signatures
+will be generated for each combination of log2fc, fdr and pvalue cutoffs. Defaults to c(0) which equates to no filtering by fold change.}
+
+\item{gmt_file_fdr_cutoffs}{Numeric vector of cutoffs to use for the FDR significant values.  Two gene signatures
 will be made of all the genes that have under the fdr pValue: one for up genes and one for down.}
 
-\item{gmt_file_pvalue_cutoffs}{Numeric vector of cutoffs to use for the pValue significant values.  Two gene signtures
+\item{gmt_file_pvalue_cutoffs}{Numeric vector of cutoffs to use for the pValue significant values.  Two gene signatures
 will be made of all the genes that have under the pValue: one for up genes and one for down.}
 
 \item{gmt_ref}{String indicating what should go in the reference part of the gmt file.}
 
-\item{imported_annotation}{Character vector to include what steps were done to the data prior to this analysis.  This module will 
+\item{imported_annotation}{Character vector to include what steps were done to the data prior to this analysis.  This module will
 add on to those steps.}
+
+\item{low_gene_count_cutoff}{Numeric value indicating if/where to remove genes with low counts. Null will remove no genes.}
+
+\item{low_gene_count_method}{The summary method to be used, applied to each gene column in my_dt ( function reference, not character ),
+used to determine genes to be removed as below low_gene_count_cutoff. Defaults to max ( i.e. if largest count for given gene is below cutoff, exclude it ).}
 
 \item{my_grouping}{This string is the name of the column you want to use to split the data into groups.}
 
 \item{output_dir}{Path to the output directory.  This will be calculated automatically if left blank.}
 
+\item{patient_key_col}{String matching the name of the column that should be used to identify the unique patients. If included, pairwise sample comparison will be performed.}
+
+\item{p_adjust_method}{String method name to pass to \code{\link{stats::p.adjust}} for FDR correction}
+
 \item{sample_key_col}{String matching the name of the column that should be used to identify the unique sample identifiers.}
 }
 \value{
-List containing several outputs contains: 
+List containing several outputs contains:
 \enumerate{
-  \item heatmap_pack - to be used by \code{\link{view_heatmap}}; 
-  \item volcano_pack - to be used by \code{\link{view_volcano_plot}}; 
+  \item volcano_pack - to be used by \code{\link{view_volcano_plot}};
   \item gmt_id_path - path to a gmt file with genes represetned by ids (typically entrez);
   \item gmt_symbol_path - path to a gmt file with genes represented by symbols (typically hgnc);
   \item stats_path - path to stats of Gene_Name, Fold_Change, pValue, FDR_pValue
 }
 }
 \description{
-The purpose of \code{differential_expression} is to compare the raw read counts of gene expression data 
-between different groups of samples to see if there is differential gene expression. This is different from model_gene_expression in that this one 
+The purpose of \code{differential_expression} is to compare the raw read counts of gene expression data
+between different groups of samples to see if there is differential gene expression. This is different from model_gene_expression in that this one
 tries to incorporate the changes needed for the LCCC-Bioinformatics group to use. Dumping sam and edger here. Letting
 old Deseq (ie not deseq2) go for a bit until it's needed.
 }
@@ -82,7 +99,7 @@ This function utilizes one of either \code{\link{DESeq}} or \code{\link{DESeq2}}
 \section{Writes}{
 
 \itemize{
-  \item stats file 
+  \item stats file
 }
 }
 
