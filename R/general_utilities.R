@@ -343,8 +343,9 @@ is_not_null = function(my_vector) {
 #' @param number_of_digits Integer of didgits to round to.
 #' 
 #' @export
-specify_decimal <- function(my_number, number_of_digits) {
-  format(round(my_number, number_of_digits), nsmall=number_of_digits)
+specify_decimal = function(my_number, number_of_digits=0){
+	my_number = as.numeric(my_number)
+	format(round(my_number, number_of_digits), nsmall = number_of_digits)
 }
 
 
