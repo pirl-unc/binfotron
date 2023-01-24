@@ -81,7 +81,7 @@ import_model_data = function(
 #' @param ranks_clm String to indicate which column contains the column ranks
 #' @param ranks_count Integer to indicate how many features to take from the column ranks
 #' @export
-function get_top_ranked_features(
+get_top_ranked_features = function(
 	ranks_df,
 	ranks_count,
 	ranks_clm = "Ranks",
@@ -107,7 +107,7 @@ function get_top_ranked_features(
 #' @param sample_key String to indicate which column contains the sample keys
 #' @param import_clms Vector of column names to keep.  Leaving blank will import all columns
 #' @export
-function serial_merge(
+serial_merge = function(
 	merge_paths,
 	sample_key = binfotron::get_default_sample_key(),
 	import_clms = NULL
@@ -139,7 +139,7 @@ function serial_merge(
 #' @param import_df Starting data.frame
 #' @param set_clm String to indicate which column contains the sample keys
 #' @export
-function split_disc_val(
+split_disc_val = function(
 	import_df,
 	set_clm = "Set"
 ){
