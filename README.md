@@ -22,4 +22,4 @@ Use the package documentation for help:
 
 
 # Previous location
-https://bitbucket.org/unc_lineberger/binfotron/
+https://bitbucket.org/unc_lineberger/binfotron/ 
