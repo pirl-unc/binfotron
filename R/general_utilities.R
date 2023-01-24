@@ -349,7 +349,6 @@ specify_decimal = function(my_number, number_of_digits=0){
 }
 
 
-
 # https://stackoverflow.com/questions/8197559/emulate-ggplot2-default-color-palette
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' gg_color_hue
