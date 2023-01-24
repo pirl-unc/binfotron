@@ -4,7 +4,7 @@
 \alias{specify_decimal}
 \title{String rounded to a specific decimal places}
 \usage{
-specify_decimal(my_number, number_of_digits)
+specify_decimal(my_number, number_of_digits = 0)
 }
 \arguments{
 \item{my_number}{Number that will be rounded}
