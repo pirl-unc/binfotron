@@ -103,6 +103,7 @@ get_features_from_ranks = function(
 	} else {
 		indep_vars = ranks_df[[1]][1:ranks_count]
 	}
+	return(indep_vars)
 }
 
 
@@ -138,5 +139,5 @@ serial_import = function(
 		missing_clms = import_clms[!(import_clms %in% names(import_df))]
 		if (length(missing_clms) > 0) stop(paste0(c("Your imported data are missing the following columns:", missing_clms), collapse= "\n"))
 	}
-	
+	return(import_df)
 }
