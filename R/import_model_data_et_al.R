@@ -126,7 +126,7 @@ serial_import = function(
 	for (import_path in import_paths){
 		this_df = fread(import_path, data.table = F)
 		if (!sample_key %in% names(this_df)) stop(paste0("This path does not contain your sample_key, ", sample_key,": ", import_path))
-		if(!is.null(import_clms)) this_df = this_df[, import_clms[import_clms %in% names(this_df)]]
+		if(!is.null(import_clms)) this_df = this_df[, unique(sample_key, import_clms[import_clms %in% names(this_df)])]
 		if (ncol(this_df) == 1) stop(paste0("This file did not have any data you were looking for: ", import_path))
 		if(is.null(import_df)){
 			import_df = this_df
