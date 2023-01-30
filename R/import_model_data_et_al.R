@@ -115,16 +115,18 @@ get_features_from_ranks = function(
 #' @param import_paths Vector of paths to import and merge
 #' @param sample_key Column name to use as the sample key to merge all matrices
 #' @param import_clms Vector of column names to import
+#' @param keep_all_samples TRUE will keep all samples from all imported matrices. FALSE will only keep samples which are in all matrices
 #' 
 #' @export
 serial_import = function(
   import_paths,
   sample_key = binfotron::get_default_sample_key(),
-  import_clms = NULL
+  import_clms = NULL,
+  keep_all_samples = FALSE
 ){
 	import_df = NULL
 	for (import_path in import_paths){
-		this_df = fread(import_path, data.table = F)
+		this_df = data.table::fread(import_path, data.table = F)
 		if (!sample_key %in% names(this_df)) stop(paste0("This path does not contain your sample_key, ", sample_key,": ", import_path))
 		if(!is.null(import_clms)) this_df = this_df[, unique(c(sample_key, import_clms[import_clms %in% names(this_df)]))]
 		if (ncol(this_df) == 1) stop(paste0("This file did not have any data you were looking for: ", import_path))
@@ -145,7 +147,7 @@ serial_import = function(
 		if(is.null(import_df)){
 			import_df = this_df
 		} else {
-			import_df = merge(import_df, this_df, by = sample_key, all = T)
+			import_df = merge(import_df, this_df, by = sample_key, all = keep_all_samples)
 		}
 	}
 	
