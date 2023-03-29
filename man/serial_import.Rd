@@ -7,7 +7,8 @@
 serial_import(
   import_paths,
   sample_key = binfotron::get_default_sample_key(),
-  import_clms = NULL
+  import_clms = NULL,
+  keep_all_samples = FALSE
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ serial_import(
 \item{sample_key}{Column name to use as the sample key to merge all matrices}
 
 \item{import_clms}{Vector of column names to import}
+
+\item{keep_all_samples}{TRUE will keep all samples from all imported matrices. FALSE will only keep samples which are in all matrices}
 }
 \description{
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
