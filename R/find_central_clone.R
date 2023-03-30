@@ -116,10 +116,6 @@ find_central_elements_by_cluster <- function(
 	if (rownames_have_numbers){
 		stop("feature_df has numbers instead of feature names for rownames. Is feature_df a data.frame with features by row?")
 	}
-	
-	if (is.na(cluster_id_width) ){
-	  cluster_id_width <- ( as.character(max_clusters) %>% nchar )
-	} 
 
 	# ensure the rownames are set properly if we got a rank_df
 	if ( !is.null(rank_df) ){
@@ -159,6 +155,9 @@ find_central_elements_by_cluster <- function(
 		max_clusters <- max_max_depth
 	}
 	
+	if (is.na(cluster_id_width) ){
+		cluster_id_width <- ( as.character(max_clusters) %>% nchar )
+	} 
 	
 	# remove non numeric columns
 	operatable_clms = binfotron::operatable_columns(my_dt = data.table::as.data.table(feature_df), acceptable_classes = 'numeric')

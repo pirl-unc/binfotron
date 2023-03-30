@@ -25,7 +25,7 @@ generate_kmeans_cluster_list(
 
 \item{feature_df}{Data.frame with rows to be compared pair-wise}
 
-\item{my_core_number}{Integer number representing the number of parallel processes to use for mhorn calculations}
+\item{my_threads}{Integer number representing the number of parallel processes to use for mhorn calculations}
 }
 \value{
 Returns lists of clusters named as cluster_#clusters-in-run_cluster#-from-run = c(cluster_variable_names). Element names in clusters are sorted alphabetically.

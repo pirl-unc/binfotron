@@ -13,7 +13,7 @@ find_central_elements_by_cluster(
   max_clusters = NA,
   max_depth = NA,
   min_clusters = 1L,
-  my_core_number = 1,
+  my_threads = 1,
   my_seed = NA,
   output_central_elements = T,
   output_cumulative_variance = F,
@@ -54,7 +54,7 @@ find_central_elements_by_cluster(
 
 \item{min_clusters}{Integer indicating the minimum number of clusters to split data into}
 
-\item{my_core_number}{Integer value specifying to number of parallel processes to use when calculating mhorn indices. Defaults to 1.}
+\item{my_threads}{Integer value specifying to number of parallel processes to use when calculating mhorn indices. Defaults to 1.}
 
 \item{my_seed}{The seed key to use so clustering can be reproduced}
 
