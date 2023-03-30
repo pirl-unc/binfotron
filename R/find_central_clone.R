@@ -243,7 +243,6 @@ find_central_elements_by_cluster <- function(
 	
   	# Find lowest ranked/most central element in each cluster
   	cat(paste0("Finding central elements in each cluster using ", c_method, " method\n\n"))
-  
   	
   	central_elements_res <- isolate_central_cluster_elements( 
   		elements_data = elements_data, 
@@ -270,16 +269,13 @@ find_central_elements_by_cluster <- function(
   		}
   	}
   	
-  	#ensure output directory exists and create paths
-  	full_dir <- file.path(output_dir, switch(c_method, `by-rank`="by_rank", `first-most-frequent`="pca_fmf", `max-depth`="pca_max", `two-in-a-row`="pca_tir", c_method ) )
-  	dir.create(full_dir, showWarnings=F)
-  	gmt_file_output_path = file.path(full_dir, paste0(file_prefix, "_gmt.txt"))
-  	central_elements_output_path = file.path(full_dir, paste0(file_prefix, "_features.tsv"))
-  	ranked_central_elements_output_path = file.path(full_dir, paste0(file_prefix, "_ranked.tsv"))
-  	heatmap_output_path = file.path(full_dir, paste0(file_prefix, "_heatmap.pdf"))
-  	heatmap_selection_output_path = file.path(full_dir, paste0(file_prefix, "_heatmap_selection.pdf"))
-  	cumulative_variance_output_path = file.path(full_dir, paste0(file_prefix, "_variance.jpg"))
-  	pc1_vs_pc2_output_path = file.path(full_dir, paste0(file_prefix, "_pc1_vs_pc2.jpg"))
+  	gmt_file_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method, "_gmt.txt"))
+  	central_elements_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method, "_features.tsv"))
+  	ranked_central_elements_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method, "_ranked.tsv"))
+  	heatmap_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method,  "_heatmap.pdf"))
+  	heatmap_selection_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method, "_heatmap_selection.pdf"))
+  	cumulative_variance_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method, "_variance.jpg"))
+  	pc1_vs_pc2_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method, "_pc1_vs_pc2.jpg"))
   	
   	#write files if requested
     if ( output_gmt ){
@@ -505,7 +501,7 @@ find_central_elements_by_cluster <- function(
             clusters_by_ct_df[[cluster_grp]], 
             central_elements_by_cluster = clusters_by_ct_df[[paste(cluster_grp, "cfs", sep="_")]], 
             cluster_group_id = cluster_grp, 
-            output_path = file.path(full_dir, paste0(file_prefix, "_", tolower(cluster_grp), "_seed", my_seed, ".pdf")) 
+            output_path = file.path(output_dir, paste0(file_prefix, "_", tolower(cluster_grp), "_", c_method, ".pdf")) 
           )
         }
       }
