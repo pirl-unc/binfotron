@@ -70,7 +70,7 @@ get_ranks_from_df = function( ranked_df, rank_clm=NA ){
 #' @param max_clusters Integer indicating the maximum number of clusters to split data into
 #' @param min_clusters Integer indicating the minimum number of clusters to split data into
 #' @param max_depth Integer indicating the maximum depth across principle components to use for determining most central element
-#' @param my_core_number Integer value specifying to number of parallel processes to use when calculating mhorn indices. Defaults to 1.
+#' @param my_threads Integer value specifying to number of parallel processes to use when calculating mhorn indices. Defaults to 1.
 #' @param my_seed The seed key to use so clustering can be reproduced
 #' @param output_central_elements Boolean whether or not to save the table of central elements by cluster group
 #' @param output_cumulative_variance Boolean whether to save a plot of the cumulative variance explained by the pca axes. Only used if \code{centrality_methods} is one of the pca options.
@@ -97,7 +97,7 @@ find_central_elements_by_cluster <- function(
 	max_clusters = NA,
 	max_depth = NA, 
 	min_clusters = 1L, 
-	my_core_number = 1, 
+	my_threads = 1, 
 	my_seed = NA, 
 	output_central_elements = T,
 	output_cumulative_variance = F,
@@ -223,7 +223,7 @@ find_central_elements_by_cluster <- function(
   			warning("MHorn cannot handle negative numbers so all number will be shifted up by the min value.")
   			feature_df = feature_df - min(feature_df)
   		}
-  	  elements_data <- compare_via_mhorn(feature_df)
+  	  elements_data <- compare_via_mhorn(feature_df, my_threads)
   	} else if (c_method %in% c("spearman", "pearson")){ 
   		#we have to transpose the input matrix because cor works on columns so we need elements as columns ...
   		cat(paste0("Calculating ", c_method, " correlation indices.\n\n"))
@@ -553,7 +553,7 @@ generate_kmeans_cluster_list = function(
 #' 
 #' 
 #' @param feature_df Data.frame with rows to be compared pair-wise
-#' @param my_core_number Integer number representing the number of parallel processes to use for mhorn calculations
+#' @param my_threads Integer number representing the number of parallel processes to use for mhorn calculations
 #'  
 #' @return Returns a correlation matrix in data.frame format
 #' 
@@ -561,12 +561,12 @@ generate_kmeans_cluster_list = function(
 #'
 compare_via_mhorn = function( 
   feature_df, 
-  my_core_number=4 
+  my_threads=4 
 ){
   #todo: potentially save mhorn analysis data to file and allow reloading it instead of reprocessing ... would need to add unique save path with seed ...
   other_elements <- rownames(feature_df)
   num_elements <- nrow(feature_df)
-  my_core_number %<>% min(nrow(feature_df))
+  my_threads %<>% min(nrow(feature_df))
   all_results <- parallel::mclapply(rownames(feature_df)[-nrow(feature_df)], function(element_a){
     other_elements <<- other_elements[-1]
     correlations <- mapply(function(element_b){
@@ -588,7 +588,7 @@ compare_via_mhorn = function(
       my_result
     }, other_elements)
     return(correlations)
-  },mc.cores=my_core_number)
+  },mc.cores=my_threads)
   
   #now populate the symmetrical dataframe to return
   mhorn_df <- data.frame(matrix(0,nrow=nrow(feature_df), ncol=nrow(feature_df)))
