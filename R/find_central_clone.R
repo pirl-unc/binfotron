@@ -118,7 +118,7 @@ find_central_elements_by_cluster <- function(
 	}
 	
 	if (is.na(cluster_id_width) ){
-	  cluster_id_width <- ( as.character(max_clusters) %>% nchar ) + 1
+	  cluster_id_width <- ( as.character(max_clusters) %>% nchar )
 	} 
 
 	# ensure the rownames are set properly if we got a rank_df
@@ -190,13 +190,12 @@ find_central_elements_by_cluster <- function(
 
 	should_continue = TRUE
 	cluster_members = list()
-	max_char = nchar(max_clusters)
 	for (clust_index in 1:max_clusters){
 		if ( !should_continue ) break;
 		should_continue = tryCatch({
 			cut_results = cutree(my_hclust, k = clust_index)
 			for ( branch_index in 1: clust_index){
-				branch_name =	paste0("Cluster_", stringr::str_pad(clust_index, width=max_char, pad="0")  , "_", stringr::str_pad(branch_index, width=max_char, pad="0"))
+				branch_name =	paste0("Cluster_", stringr::str_pad(clust_index, width=cluster_id_width, pad="0")  , "_", stringr::str_pad(branch_index, width=cluster_id_width, pad="0"))
 				my_names = names(cut_results[cut_results == branch_index])
 				cluster_members[[branch_name]] = my_names
 			}
@@ -246,7 +245,6 @@ find_central_elements_by_cluster <- function(
   	cat(paste0("Finding central elements in each cluster using ", c_method, " method\n\n"))
   
   	
-  	
   	central_elements_res <- isolate_central_cluster_elements( 
   		elements_data = elements_data, 
   		cluster_members = cluster_members, 
@@ -257,19 +255,13 @@ find_central_elements_by_cluster <- function(
   	central_elements = sapply(central_elements_res,function(x){x$central_element})
   	index_values = lapply(central_elements_res,function(x){x$all_values})
   	rm(central_elements_res)
-  	# clear out the NA's
-  	# for (this_name in names(index_values)){
-  	# 	if (length(index_values[[this_name]]) == 1){
-  	# 	  if (is.na(index_values[[this_name]])) index_values[this_name] = NULL
-  	# 	}
-  	# }
   	
   	max_cluster_value = as.numeric(strsplit(names(index_values[length(index_values)]),split="_")[[1]][2])
   	
   	# put a table together of all the average index/correlation values for each feature
   	index_ave_mx = matrix(nrow = nrow(elements_data), ncol = max_cluster_value)
   	rownames(index_ave_mx) = rownames(elements_data)
-  	colnames(index_ave_mx) = 	paste0("Cluster_", stringr::str_pad(1:max_cluster_value, width=max_char, pad="0"))
+  	colnames(index_ave_mx) = 	paste0("Cluster_", stringr::str_pad(1:max_cluster_value, width=cluster_id_width, pad="0"))
   	for (clm_name in colnames(index_ave_mx)){
   		my_branches = grep(paste0(clm_name,"_"),names(index_values), value = T)
   		for (my_branch in my_branches){
@@ -281,9 +273,9 @@ find_central_elements_by_cluster <- function(
   	#ensure output directory exists and create paths
   	full_dir <- file.path(output_dir, switch(c_method, `by-rank`="by_rank", `first-most-frequent`="pca_fmf", `max-depth`="pca_max", `two-in-a-row`="pca_tir", c_method ) )
   	dir.create(full_dir, showWarnings=F)
-  	gmt_file_output_path = file.path(full_dir, paste0(file_prefix, "_gmt__seed", my_seed, ".gmt.txt"))
-  	central_elements_output_path = file.path(full_dir, paste0(file_prefix, "_features__seed", my_seed, ".tsv"))
-  	ranked_central_elements_output_path = file.path(full_dir, paste0(file_prefix, "_ranked__seed", my_seed, ".tsv"))
+  	gmt_file_output_path = file.path(full_dir, paste0(file_prefix, "_gmt.txt"))
+  	central_elements_output_path = file.path(full_dir, paste0(file_prefix, "_features.tsv"))
+  	ranked_central_elements_output_path = file.path(full_dir, paste0(file_prefix, "_ranked.tsv"))
   	heatmap_output_path = file.path(full_dir, paste0(file_prefix, "_heatmap.pdf"))
   	heatmap_selection_output_path = file.path(full_dir, paste0(file_prefix, "_heatmap_selection.pdf"))
   	cumulative_variance_output_path = file.path(full_dir, paste0(file_prefix, "_variance.jpg"))
@@ -380,9 +372,7 @@ find_central_elements_by_cluster <- function(
 	        	
 	        	for (cluster_number in max_clusters:1){
 	        		for (branch_number in 1:max_clusters){
-
-	        			
-	        			raw_branch_name = paste0("Cluster_", stringr::str_pad(cluster_number, width=max_char, pad="0")  , "_", stringr::str_pad(branch_number, width=max_char, pad="0"))
+	        			raw_branch_name = paste0("Cluster_", stringr::str_pad(cluster_number, width=cluster_id_width, pad="0")  , "_", stringr::str_pad(branch_number, width=cluster_id_width, pad="0"))
 	        			branch_features = cluster_members[[raw_branch_name]]
 	        			branch_features = row_names[row_names %in% branch_features]
 	        			if ( length(branch_features) > 1) {
@@ -399,7 +389,7 @@ find_central_elements_by_cluster <- function(
 			        					gp = gpar(col = my_colors[cluster_number], fill = NA, lwd = 1, lty = 1), just = c("left", "top"))
 			        			})
 		        			}
-		        			mean_branch_col_name = paste0("Branches ", stringr::str_pad(cluster_number, width=max_char, pad="0"))
+		        			mean_branch_col_name = paste0("Branches ", stringr::str_pad(cluster_number, width=cluster_id_width, pad="0"))
 	        			} # end if
 	        			
 	        		} # end for
@@ -440,24 +430,15 @@ find_central_elements_by_cluster <- function(
 	        	
 	        	for (cluster_number in max_clusters:1){
 	        		for (branch_number in 1:max_clusters){
-	        			raw_branch_name = paste0("Cluster_", stringr::str_pad(cluster_number, width=max_char, pad="0")  , "_", stringr::str_pad(branch_number, width=max_char, pad="0"))
+	        			raw_branch_name = paste0("Cluster_", stringr::str_pad(cluster_number, width=cluster_id_width, pad="0")  , "_", stringr::str_pad(branch_number, width=cluster_id_width, pad="0"))
 	        			branch_features = cluster_members[[raw_branch_name]]
 	        			branch_features = row_names[row_names %in% branch_features]
 	        			if ( length(branch_features) > 1) {
 	        				# label the correlation raw values
 	        				box_height = tile_size * length(branch_features) # same as width for raw values
 	        				start_point = (which(row_names == branch_features[1])-1)/length(row_names)
-	        				# if (cluster_number > 1){ # no point in putting a box around everything
-	        				# 	decorate_heatmap_body("hm_data", row_slice = 1, column_slice = 1, {
-	        				# 		grid.rect(
-	        				# 			x = unit(start_point, "npc"),
-	        				# 			y = unit(1-start_point, "npc"), # top left
-	        				# 			width = box_height,
-	        				# 			height = box_height,
-	        				# 			gp = gpar(col = my_colors[cluster_number], fill = NA, lwd = 1, lty = 1), just = c("left", "top"))
-	        				# 	})
-	        				# }
-	        				mean_branch_col_name = paste0("Branches ", stringr::str_pad(cluster_number, width=max_char, pad="0"))
+
+	        				mean_branch_col_name = paste0("Branches ", stringr::str_pad(cluster_number, width=cluster_id_width, pad="0"))
 	        				
 	        				if( mean_branch_col_name %in% colnames(index_ave_mx) ){
 	        					index_ave_width = 1/ncol(index_ave_mx)
@@ -955,19 +936,19 @@ write_list_as_gmt = function(
 #' @description Creates a file with one tab separated row per each element and one column for each number of clusters with 1's for the central elements of each cluster in each cluster group and "" everywhere else
 #' 
 #' 
-#' @param central_elements Named list of central element from each cluster ( as returned by isolate_central_cluster_elements )
 #' @param all_elements Character vector of element names containing, at a minimum, all central elements defined in first argument
-#' @param output_path One-length character vector with fully qualified path to output file
-#' @param display_output Boolean option to display final output
+#' @param central_elements Named list of central element from each cluster ( as returned by isolate_central_cluster_elements )
 #' @param cluster_id_width The number of characters in cluster group id's and individual cluster id's
+#' @param output_path One-length character vector with fully qualified path to output file
+#' @param return_output Boolean option to display final output
 #'  
-#' @return Returns central elements dataframe as saved to file
+#' @return Returns central elements data.frame as saved to file
 #' 
 write_central_elements_table = function(
 	central_elements, 
 	all_elements, 
 	output_path=file.path(getwd(), "central_elements_by_num_clusters.tsv"),
-	display_output = F,
+	return_output = F,
 	cluster_id_width = NA
 ){
   #get max and min number of clusters
@@ -991,12 +972,15 @@ write_central_elements_table = function(
     output_df[ cluster_elements, names(output_df) == paste("Clusters", cluster, sep="_") ] <- 1
   }
   
+  output_df = data.frame(Feature = rownames(output_df), output_df)
+  rownames(output_df) = NULL
+  
   if ( !is.na(output_path) ){
-    write.table( x = output_df, file= output_path, sep="\t", row.names = T, col.names=NA )
+  	fwrite(output_df, file=output_path, sep = "\t")
     cat(paste0("Central elements table saved to:", output_path,'\n\n'))
   }
   
-  if (display_output) return(output_df)
+  if (return_output) return(output_df)
 }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1039,6 +1023,7 @@ write_ranked_central_elements_table = function(
   
   if (display_output) output_df
 }
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # pca_variance_plot

@@ -8,7 +8,7 @@ write_central_elements_table(
   central_elements,
   all_elements,
   output_path = file.path(getwd(), "central_elements_by_num_clusters.tsv"),
-  display_output = F,
+  return_output = F,
   cluster_id_width = NA
 )
 }
@@ -19,12 +19,12 @@ write_central_elements_table(
 
 \item{output_path}{One-length character vector with fully qualified path to output file}
 
-\item{display_output}{Boolean option to display final output}
+\item{return_output}{Boolean option to display final output}
 
 \item{cluster_id_width}{The number of characters in cluster group id's and individual cluster id's}
 }
 \value{
-Returns central elements dataframe as saved to file
+Returns central elements data.frame as saved to file
 }
 \description{
 Creates a file with one tab separated row per each element and one column for each number of clusters with 1's for the central elements of each cluster in each cluster group and "" everywhere else
