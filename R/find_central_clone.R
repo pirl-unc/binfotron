@@ -1,8 +1,4 @@
-#library(data.table)
-#library(magrittr)
-#library(ggplot2)
-#library(ggrepel)
-#library(ggforce) # for geom_mark_ellipse
+
 
 #' function dependencies:
 #' 
@@ -111,6 +107,11 @@ find_central_elements_by_cluster <- function(
 	dist_method = "euclidean",
 	hclust_method = "complete"
 ){
+	
+	library(ggplot2)
+	library(ggrepel)
+	library(ggforce) # for geom_mark_ellipse
+	library(ComplexHeatmap)
 	
 	rownames_have_numbers = suppressWarnings(any(!is.na(as.numeric(rownames(feature_df)))))
 	if (rownames_have_numbers){
@@ -322,14 +323,14 @@ find_central_elements_by_cluster <- function(
         grid_size = 100
         my_font_size = grid_size/nrow(hm_data) * 2.5
         
-        col_fun <- circlize::colorRamp2(length(rank_data):1, plasma(length(rank_data)))
+        col_fun <- circlize::colorRamp2(length(rank_data):1, viridisLite::plasma(length(rank_data)))
         row_ha = rowAnnotation(Rank = rank_data, col = list(Rank = col_fun), show_legend = FALSE)
         
         # drawing rect on complexheatmap: https://github.com/jokergoo/ComplexHeatmap/issues/522
         my_hm = Heatmap(
         	hm_data, 
         	name = 'hm_data',
-        	col=viridis(100),
+        	col=viridisLite::viridis(100),
         	cluster_rows = row_dend, 
         	cluster_columns = row_dend,
         	show_column_dend = FALSE,
@@ -401,7 +402,7 @@ find_central_elements_by_cluster <- function(
 	        my_values_hm = Heatmap(
 	        	index_ave_mx[ro,],
 	        	name='index_ave',
-	        	col=viridis(100),
+	        	col=viridisLite::viridis(100),
 	        	show_heatmap_legend = FALSE,
 	        	width = unit(grid_size, grid_units), 
 	        	height = unit(grid_size, grid_units),
