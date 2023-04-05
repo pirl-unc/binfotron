@@ -62,6 +62,9 @@ get_ranks_from_df = function( ranked_df, rank_clm=NA ){
 #' }
 #' @param cluster_id_width An integer indicating how many characters to use for cluster group and cluster number id's. Defaults to one more than the number of characters in \code{max_clusters}.
 #' @param cluster_plot_sizes Integer vector indicating which cluster groups to save as plots with clusters circled and central elements labeled. Only used if \code{centrality_methods} is one of the pca options.
+#' @param grid_size Number to specify the size of the heatmap 
+#' @param grid_units Number to specify the units corresponding to \code{grid_size} of the heatmap 
+#' @param file_prefix The text to be prepended to the file names for tables and plots
 #' @param file_prefix The text to be prepended to the file names for tables and plots
 #' @param max_clusters Integer indicating the maximum number of clusters to split data into
 #' @param min_clusters Integer indicating the minimum number of clusters to split data into
@@ -86,10 +89,18 @@ get_ranks_from_df = function( ranked_df, rank_clm=NA ){
 #' 
 find_central_elements_by_cluster <- function( 
 	feature_df, 
+	anno_mark_font_size = 8,
+	annotate_central_elements = T,
+	annotate_central_elements_n_branches = 25,
+	central_element_circle_radius = 1/5, # as a fraction of the tile size, ie 1/2 would take up the whole tile
 	centrality_methods ="max-depth", 
 	cluster_id_width = NA,
 	cluster_plot_sizes = NA, 
+	dist_method = "euclidean",
 	file_prefix = "central_elements",
+	grid_size = 100,
+	grid_units = 'mm',
+	hclust_method = "complete",
 	max_clusters = NA,
 	max_depth = NA, 
 	min_clusters = 1L, 
@@ -104,8 +115,10 @@ find_central_elements_by_cluster <- function(
 	output_ranked_central_elements = T,
 	rank_clm ="Rank",
 	rank_df = NULL,
-	dist_method = "euclidean",
-	hclust_method = "complete"
+	row_dend_width = 25,
+	row_dend_width_units = "mm",
+	hm_raster_quality = 5,
+	show_hm_row_names = T
 ){
 	
 	library(ggplot2)
@@ -181,13 +194,27 @@ find_central_elements_by_cluster <- function(
 	cat("Scaling analysis data by feature (across samples).\n\n")
 	feature_df %<>% t() %>% scale(center=F) %>% t() %>% data.frame()
 
-	cat(paste0("Generating cluster groups from ", min_clusters, " to ", max_clusters, " clusters using seed ", my_seed, ".\n\n"))
+	cat(paste0("Generating cluster groups from ", min_clusters, " to ", max_clusters, " clusters using seed ", my_seed, ".\n"))
 
+	# explored several distance methods here
+	#   stats::dist never finishes ( 64cpu 500GB machine for 2 days )
+	#   fastdist nolonger exists
+	#   distmat 
+	#   pracma::pdist makes distance matrices taht are too large for hclust to handle
+	library(doParallel)
+	cl <- makeCluster(my_threads)
+	registerDoParallel(cl)
 	
-	# wanted to be able to look at the results of the clusters alongside the values
-	dd <- dist(feature_df, method = dist_method )
-	my_hclust <- hclust(dd, method = hclust_method )
-
+	cat("Calculating distances.\n")
+	dd <- proxy::dist(
+		feature_df,
+		method = dist_method,
+		parallel = TRUE,
+		numproc = my_threads
+	)
+	cat("Clustering.\n\n")
+	my_hclust <- hclust( dd, method = hclust_method )
+	
 	should_continue = TRUE
 	cluster_members = list()
 	for (clust_index in 1:max_clusters){
@@ -213,9 +240,9 @@ find_central_elements_by_cluster <- function(
 	# iterate over list of centrality_methods
 	# ---------------------------------------------------------------------------
 	for ( c_method in centrality_methods ) {
-		#c_method =  'by-rank'
+		# c_method =  'by-rank'
 		
-		cat(paste0(c_method, "\n"))
+		cat(paste0("Centrality method: ", c_method, "\n"))
 	  elements_data <- NA
   	if ( c_method == "mhorn" ){
   	  cat("Calculating Morisita-Horn similarity indices.\n\n")
@@ -319,14 +346,32 @@ find_central_elements_by_cluster <- function(
         	hm_data[this_feature, this_feature] = NA
         }
         
-        grid_units = 'mm'
-        grid_size = 100
         my_font_size = grid_size/nrow(hm_data) * 2.5
         
         col_fun <- circlize::colorRamp2(length(rank_data):1, viridisLite::plasma(length(rank_data)))
         row_ha = rowAnnotation(Rank = rank_data, col = list(Rank = col_fun), show_legend = FALSE)
         
-        # drawing rect on complexheatmap: https://github.com/jokergoo/ComplexHeatmap/issues/522
+        if (annotate_central_elements){
+        	annotated_central_elements = central_elements
+          if(!is.na(annotate_central_elements_n_branches)){
+            if (annotate_central_elements_n_branches > max_cluster_value){
+            	annotate_central_elements_n_branches = max_cluster_value
+            }
+          	# here we want to grab all the branches up to the annotate_central_elements_n_branches and annotate the rows the rows there
+          	if (annotate_central_elements_n_branches < max_cluster_value){
+          		next_cluster = paste0("Cluster_", stringr::str_pad(annotate_central_elements_n_branches + 1, width=cluster_id_width, pad="0"), "_")
+          		annotated_central_elements = annotated_central_elements[1:(which(grepl(next_cluster, names(annotated_central_elements)))[1] - 1)]
+          		
+          		
+          	}
+          }
+        	annotate_rows = which(rownames(hm_data) %in% unique(annotated_central_elements))
+        	left_annotation = rowAnnotation(mark = anno_mark(at = annotate_rows, labels = rownames(hm_data)[annotate_rows], which = "row", side = 'left', labels_gp = gpar(fontsize = anno_mark_font_size)))
+        	show_hm_row_names = F
+        } else {
+        	left_annotation = NULL
+        }
+        
         my_hm = Heatmap(
         	hm_data, 
         	name = 'hm_data',
@@ -335,25 +380,29 @@ find_central_elements_by_cluster <- function(
         	cluster_columns = row_dend,
         	show_column_dend = FALSE,
         	show_column_names = FALSE,
+        	show_row_names = show_hm_row_names,
         	width = unit(grid_size, grid_units), 
         	height = unit(grid_size, grid_units),
         	column_names_gp = grid::gpar(fontsize = unit(my_font_size, grid_units)),
         	row_names_gp = grid::gpar(fontsize = unit(my_font_size, grid_units)),
         	row_dend_side = "right",
         	row_names_side = "left",
-        	row_dend_width = unit(0.5, "cm"),
+        	row_dend_width = unit(row_dend_width, row_dend_width_units),
         	right_annotation = row_ha,
+        	left_annotation = left_annotation,
         	heatmap_legend_param = list(
         		title = legend_title, 
         		direction = "horizontal",
         	  legend_width = unit(grid_size*0.3, grid_units),
         	  legend_height = unit(grid_size*0.07, grid_units),
         	  title_position = "lefttop"
-        	)
+        	),
+        	use_raster = TRUE,
+        	raster_quality = hm_raster_quality
         )
-        	
+        
         pdf(file=heatmap_output_path, width = 11, height = 8)
-
+          
 	        my_hm = draw(my_hm, heatmap_legend_side = "bottom")
 	        ro = row_order(my_hm)
 	        co = column_order(my_hm)
@@ -377,6 +426,7 @@ find_central_elements_by_cluster <- function(
 		        			start_point = (which(row_names == branch_features[1])-1)/length(row_names)
 		        			if (cluster_number > 1){ # no point in putting a box around everything
 			        			decorate_heatmap_body("hm_data", row_slice = 1, column_slice = 1, {
+			        				# drawing rect on complexheatmap: https://github.com/jokergoo/ComplexHeatmap/issues/522
 			        				grid.rect(
 			        					x = unit(start_point, "npc"),
 			        					y = unit(1-start_point, "npc"), # top left
@@ -395,21 +445,25 @@ find_central_elements_by_cluster <- function(
 	        
         dev.off()
         
+        
         pdf(file=heatmap_selection_output_path, width = 11, height = 8)
-
-          
+          column_font_size = grid_size/ncol(index_ave_mx) * 2.5
+        
 	        colnames(index_ave_mx) = gsub("Cluster_", "Branches ", colnames(index_ave_mx))
 	        my_values_hm = Heatmap(
 	        	index_ave_mx[ro,],
 	        	name='index_ave',
 	        	col=viridisLite::viridis(100),
 	        	show_heatmap_legend = FALSE,
+	        	show_row_names = show_hm_row_names,
 	        	width = unit(grid_size, grid_units), 
 	        	height = unit(grid_size, grid_units),
 	        	cluster_rows = FALSE,
 	        	cluster_columns = FALSE,
-	        	column_names_gp = grid::gpar(fontsize = unit(my_font_size, grid_units)),
-	        	row_names_gp = grid::gpar(fontsize = unit(my_font_size, grid_units))
+	        	column_names_gp = grid::gpar(fontsize = unit(column_font_size, grid_units)),
+	        	row_names_gp = grid::gpar(fontsize = unit(my_font_size, grid_units)),
+	        	use_raster = TRUE,
+	        	raster_quality = hm_raster_quality
 	        )
 	        my_values_hm = draw(my_values_hm, heatmap_legend_side = "bottom")
 	        
@@ -422,7 +476,8 @@ find_central_elements_by_cluster <- function(
 	        	max_clusters = max(sapply(names(cluster_members), function (x){as.numeric(strsplit(x, split = "_")[[1]][2])}) )
 	        	my_colors = rev(viridisLite::plasma(max_clusters - 1)) # don't need to outline the whole plot or the diagonals
 	        	max_nchar = nchar(max_clusters)
-	        	tile_size = 1/length(ro)
+	        	tile_height = 1/length(ro)
+	        	tile_width = 1/ncol(index_ave_mx)
 	        	
 	        	for (cluster_number in max_clusters:1){
 	        		for (branch_number in 1:max_clusters){
@@ -431,7 +486,7 @@ find_central_elements_by_cluster <- function(
 	        			branch_features = row_names[row_names %in% branch_features]
 	        			if ( length(branch_features) > 1) {
 	        				# label the correlation raw values
-	        				box_height = tile_size * length(branch_features) # same as width for raw values
+	        				box_height = tile_height * length(branch_features) # same as width for raw values
 	        				start_point = (which(row_names == branch_features[1])-1)/length(row_names)
 
 	        				mean_branch_col_name = paste0("Branches ", stringr::str_pad(cluster_number, width=cluster_id_width, pad="0"))
@@ -442,8 +497,7 @@ find_central_elements_by_cluster <- function(
 	        					# need the index of the best feature
 	        					central_element = central_elements[raw_branch_name]
 	        					text_start_point = (which(row_names == central_element))/length(row_names)
-	        					
-	        					
+
 	        					decorate_heatmap_body("index_ave", row_slice = 1, column_slice = 1, {
 	        						grid.rect(
 	        							x = unit((cluster_number-1)/ncol(index_ave_mx), "npc"),
@@ -452,12 +506,11 @@ find_central_elements_by_cluster <- function(
 	        							height = box_height,
 	        							gp = gpar(col = "white", fill = NA, lwd = 1, lty = 1), just = c("left", "top")
 	        						)
-	        						grid.text(
-	        							"*", 
-	        							gp = gpar(col = "red"),
+	        						grid.circle(
+	        							gp = gpar(fill = "red", col = NA), # fontsize = central_element_font_size, 
 	        							x = unit((cluster_number - 0.5)/ncol(index_ave_mx), "npc"), 
-	        							y = unit(1-text_start_point, "npc"), 
-	        							rot = 0
+	        							y = unit( 1 - text_start_point + tile_height * 0.5, "npc" ), 
+	        							r = tile_width * central_element_circle_radius
 	        						)
 	        					})
 	        				}

@@ -6,10 +6,18 @@
 \usage{
 find_central_elements_by_cluster(
   feature_df,
+  anno_mark_font_size = 8,
+  annotate_central_elements = T,
+  annotate_central_elements_n_branches = 25,
+  central_element_circle_radius = 1/5,
   centrality_methods = "max-depth",
   cluster_id_width = NA,
   cluster_plot_sizes = NA,
+  dist_method = "euclidean",
   file_prefix = "central_elements",
+  grid_size = 100,
+  grid_units = "mm",
+  hclust_method = "complete",
   max_clusters = NA,
   max_depth = NA,
   min_clusters = 1L,
@@ -24,8 +32,10 @@ find_central_elements_by_cluster(
   output_ranked_central_elements = T,
   rank_clm = "Rank",
   rank_df = NULL,
-  dist_method = "euclidean",
-  hclust_method = "complete"
+  row_dend_width = 25,
+  row_dend_width_units = "mm",
+  hm_raster_quality = 5,
+  show_hm_row_names = T
 )
 }
 \arguments{
@@ -46,7 +56,15 @@ find_central_elements_by_cluster(
 
 \item{cluster_plot_sizes}{Integer vector indicating which cluster groups to save as plots with clusters circled and central elements labeled. Only used if \code{centrality_methods} is one of the pca options.}
 
+\item{dist_method}{String indicating the method to pass to \code{stats::dist} method for clustering}
+
 \item{file_prefix}{The text to be prepended to the file names for tables and plots}
+
+\item{grid_size}{Number to specify the size of the heatmap}
+
+\item{grid_units}{Number to specify the units corresponding to \code{grid_size} of the heatmap}
+
+\item{hclust_method}{String indicating the method to pass to \code{stats::hclust} method for clustering}
 
 \item{max_clusters}{Integer indicating the maximum number of clusters to split data into}
 
@@ -73,10 +91,6 @@ find_central_elements_by_cluster(
 \item{rank_clm}{One-length character vector with the name of the column holding the initial rankings, if any, in either rank_df if one was sent, or in \code{feature_df} otherwise}
 
 \item{rank_df}{Data.frame with \code{feature_df} features by row in column one and \code{rank_clm} with numeric default ranking for tie-breaking.  If \code{<NA>} \code{rank_clm} will be looked for in \code{feature_df}.}
-
-\item{dist_method}{String indicating the method to pass to \code{stats::dist} method for clustering}
-
-\item{hclust_method}{String indicating the method to pass to \code{stats::hclust} method for clustering}
 
 \item{output_pc1_vs_pv2}{Boolean whether to save a plot of the principle component 1 and 2 axes. Only used if \code{centrality_methods} is one of the pca options.}
 }
