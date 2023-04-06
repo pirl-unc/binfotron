@@ -91,9 +91,9 @@ find_central_elements_by_cluster <- function(
 	feature_df, 
 	anno_mark_font_size = 8,
 	annotate_central_elements = T,
-	annotate_central_elements_n_branches = 25,
-	central_element_circle_radius = 1/5, # as a fraction of the tile size, ie 1/2 would take up the whole tile
-	centrality_methods ="max-depth", 
+	annotate_central_elements_n_branches = 40,
+	central_element_circle_radius = 1/10, # as a fraction of the tile size, ie 1/2 would take up the whole tile
+	centrality_methods ="by-rank", 
 	cluster_id_width = NA,
 	cluster_plot_sizes = NA, 
 	dist_method = "euclidean",
@@ -101,7 +101,7 @@ find_central_elements_by_cluster <- function(
 	grid_size = 100,
 	grid_units = 'mm',
 	hclust_method = "complete",
-	max_clusters = NA,
+	max_clusters = 40,
 	max_depth = NA, 
 	min_clusters = 1L, 
 	my_threads = 1, 
@@ -125,6 +125,9 @@ find_central_elements_by_cluster <- function(
 	library(ggrepel)
 	library(ggforce) # for geom_mark_ellipse
 	library(ComplexHeatmap)
+	
+	
+	if (centrality_methods != "by-rank") warning("Centrality mehtods other than 'by-rank' have not been tested rigorously.  Proceed with caution.")
 	
 	rownames_have_numbers = suppressWarnings(any(!is.na(as.numeric(rownames(feature_df)))))
 	if (rownames_have_numbers){
@@ -278,6 +281,8 @@ find_central_elements_by_cluster <- function(
   		max_depth = max_depth, 
   		centrality_method = c_method
   	)
+  	cat(paste0("Done finding central elements\n\n"))
+  	
   	central_elements = sapply(central_elements_res,function(x){x$central_element})
   	index_values = lapply(central_elements_res,function(x){x$all_values})
   	rm(central_elements_res)
@@ -1049,24 +1054,35 @@ write_central_elements_table = function(
 #' 
 write_ranked_central_elements_table = function(
     central_elements, 
-    element_ranks, 
+    rank_data, 
     output_path=file.path(getwd(), "ranked_unique_central_elements_ranked.tsv"),
     display_output=F
 ){
   #find the first cluster that contains each unique central element
   unique_central_elements <- central_elements %>% unlist() %>% {.[!duplicated(.)]}
+  
   #get the cluster_ids for the unique central elements found above after stripping the _{cluster_number_within_group}
-  cluster_grp_ids <- names(unique_central_elements) %>% gsub("_[0-9]+$", "", .) %>% unique()
+  cluster_grp_ids <- names(unique_central_elements) %>% 
+  	gsub("_[0-9]+$", "", .) %>% 
+  	unique() %>% 
+  	sort() # they should be sorted already but just in case...
+  
   ordered_central_elements <- c()
   #loop over the cluster id's that contain unique elements
   for ( cluster_grp in cluster_grp_ids ){
+  	# message(cluster_grp, "------")
     #get the unique elements that are from clusters in this cluster group
-    elements_by_cluster <- unique_central_elements[ names(unique_central_elements) %like% cluster_grp ]
+    elements_by_cluster = unique_central_elements[grepl(paste0("^", cluster_grp, "_"), names(unique_central_elements))]
+    # message(elements_by_cluster)
+
     #because there could be multiple clusters in this cluster group with unique central elements, we need to order them by rank
-    ordered_central_elements %<>% c( element_ranks[ elements_by_cluster ] %>% sort() %>% names() )
+    ordered_central_elements %<>% c( rank_data[ elements_by_cluster ] %>% sort() %>% names() )
+    # message(paste0("  ", ordered_central_elements, collapse = "\n"))
+    # message("")
   }
   # create the output data frame with the ordered central elements and their ranks
-  output_df <- data.frame(element=ordered_central_elements, rank=element_ranks[ordered_central_elements])
+  output_df <- data.frame(Feature=ordered_central_elements, Rank=1:length(ordered_central_elements))
+
   write.table( x = output_df, file= output_path, sep="\t", row.names = F, col.names=T )
   cat(paste0("Ranked central elements table saved to:", output_path,'\n\n'))
   
