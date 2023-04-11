@@ -91,7 +91,7 @@ find_central_elements_by_cluster <- function(
 	feature_df, 
 	anno_mark_font_size = 8,
 	annotate_central_elements = T,
-	annotate_central_elements_n_branches = 40,
+	annotate_central_elements_n_clusters = 40,
 	central_element_circle_radius = 1/10, # as a fraction of the tile size, ie 1/2 would take up the whole tile
 	centrality_methods ="by-rank", 
 	cluster_id_width = NA,
@@ -115,7 +115,11 @@ find_central_elements_by_cluster <- function(
 	output_ranked_central_elements = T,
 	rank_clm ="Rank",
 	rank_df = NULL,
-	row_dend_width = 25,
+	row_annotation_lwd = 0.25,
+	row_annotation_width = 15, 
+	row_annotation_width_units = "mm",
+	row_dend_lwd = 0.25,
+	row_dend_width = 15,
 	row_dend_width_units = "mm",
 	hm_raster_quality = 5,
 	show_hm_row_names = T
@@ -294,9 +298,9 @@ find_central_elements_by_cluster <- function(
   	rownames(index_ave_mx) = rownames(elements_data)
   	colnames(index_ave_mx) = 	paste0("Cluster_", stringr::str_pad(1:max_cluster_value, width=cluster_id_width, pad="0"))
   	for (clm_name in colnames(index_ave_mx)){
-  		my_branches = grep(paste0(clm_name,"_"),names(index_values), value = T)
-  		for (my_branch in my_branches){
-  			my_values = index_values[[my_branch]]
+  		my_clusters = grep(paste0(clm_name,"_"),names(index_values), value = T)
+  		for (my_cluster in my_clusters){
+  			my_values = index_values[[my_cluster]]
   			index_ave_mx[ names(my_values), clm_name ] = my_values
   		}
   	}
@@ -356,25 +360,22 @@ find_central_elements_by_cluster <- function(
         col_fun <- circlize::colorRamp2(length(rank_data):1, viridisLite::plasma(length(rank_data)))
         row_ha = rowAnnotation(Rank = rank_data, col = list(Rank = col_fun), show_legend = FALSE)
         
+        left_annotation = NULL
         if (annotate_central_elements){
         	annotated_central_elements = central_elements
-          if(!is.na(annotate_central_elements_n_branches)){
-            if (annotate_central_elements_n_branches > max_cluster_value){
-            	annotate_central_elements_n_branches = max_cluster_value
+          if(!is.na(annotate_central_elements_n_clusters)){
+            if (annotate_central_elements_n_clusters > max_cluster_value){
+            	annotate_central_elements_n_clusters = max_cluster_value
             }
-          	# here we want to grab all the branches up to the annotate_central_elements_n_branches and annotate the rows the rows there
-          	if (annotate_central_elements_n_branches < max_cluster_value){
-          		next_cluster = paste0("Cluster_", stringr::str_pad(annotate_central_elements_n_branches + 1, width=cluster_id_width, pad="0"), "_")
+          	# here we want to grab all the clusters up to the annotate_central_elements_n_clusters and annotate the rows the rows there
+          	if (annotate_central_elements_n_clusters < max_cluster_value){
+          		next_cluster = paste0("Cluster_", stringr::str_pad(annotate_central_elements_n_clusters + 1, width=cluster_id_width, pad="0"), "_")
           		annotated_central_elements = annotated_central_elements[1:(which(grepl(next_cluster, names(annotated_central_elements)))[1] - 1)]
-          		
-          		
           	}
           }
         	annotate_rows = which(rownames(hm_data) %in% unique(annotated_central_elements))
-        	left_annotation = rowAnnotation(mark = anno_mark(at = annotate_rows, labels = rownames(hm_data)[annotate_rows], which = "row", side = 'left', labels_gp = gpar(fontsize = anno_mark_font_size)))
+        	left_annotation = rowAnnotation(mark = anno_mark(at = annotate_rows, labels = rownames(hm_data)[annotate_rows], which = "row", side = 'left', labels_gp = gpar(fontsize = anno_mark_font_size), link_width = unit(row_annotation_width, row_annotation_width_units), link_gp = gpar(lwd=row_annotation_lwd)))
         	show_hm_row_names = F
-        } else {
-        	left_annotation = NULL
         }
         
         my_hm = Heatmap(
@@ -393,6 +394,7 @@ find_central_elements_by_cluster <- function(
         	row_dend_side = "right",
         	row_names_side = "left",
         	row_dend_width = unit(row_dend_width, row_dend_width_units),
+        	row_dend_gp = gpar(lwd=row_dend_lwd),
         	right_annotation = row_ha,
         	left_annotation = left_annotation,
         	heatmap_legend_param = list(
@@ -440,7 +442,7 @@ find_central_elements_by_cluster <- function(
 			        					gp = gpar(col = my_colors[cluster_number], fill = NA, lwd = 1, lty = 1), just = c("left", "top"))
 			        			})
 		        			}
-		        			mean_branch_col_name = paste0("Branches ", stringr::str_pad(cluster_number, width=cluster_id_width, pad="0"))
+		        			mean_branch_col_name = paste0("Clusters ", stringr::str_pad(cluster_number, width=cluster_id_width, pad="0"))
 	        			} # end if
 	        			
 	        		} # end for
@@ -454,7 +456,7 @@ find_central_elements_by_cluster <- function(
         pdf(file=heatmap_selection_output_path, width = 11, height = 8)
           column_font_size = grid_size/ncol(index_ave_mx) * 2.5
         
-	        colnames(index_ave_mx) = gsub("Cluster_", "Branches ", colnames(index_ave_mx))
+	        colnames(index_ave_mx) = gsub("Cluster_", "Clusters ", colnames(index_ave_mx))
 	        my_values_hm = Heatmap(
 	        	index_ave_mx[ro,],
 	        	name='index_ave',
@@ -494,7 +496,7 @@ find_central_elements_by_cluster <- function(
 	        				box_height = tile_height * length(branch_features) # same as width for raw values
 	        				start_point = (which(row_names == branch_features[1])-1)/length(row_names)
 
-	        				mean_branch_col_name = paste0("Branches ", stringr::str_pad(cluster_number, width=cluster_id_width, pad="0"))
+	        				mean_branch_col_name = paste0("Clusters ", stringr::str_pad(cluster_number, width=cluster_id_width, pad="0"))
 	        				
 	        				if( mean_branch_col_name %in% colnames(index_ave_mx) ){
 	        					index_ave_width = 1/ncol(index_ave_mx)
