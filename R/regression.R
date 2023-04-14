@@ -150,6 +150,9 @@ regression = function(
   model_comparison_path = file.path(output_dir, paste0(base_file_name, "_models.tsv"))
   if(file.exists(model_comparison_path)) file.remove(model_comparison_path)
   
+  model_prediction_path = file.path(output_dir, paste0(base_file_name, "_predictions.tsv"))
+  if(file.exists(model_prediction_path)) file.remove(model_prediction_path)
+  
   readme_path = file.path(output_dir, paste0(base_file_name, "_readme.txt"))
   if(clear_readme) if(file.exists(readme_path)) file.remove(readme_path)
   
@@ -630,6 +633,7 @@ regression = function(
   
   pvalue_dt = data.table()
   comp_dt = data.table()
+  predictions_dt = data.table()
   show_group_in_model_warning = TRUE
   for (group_index in 1:length(my_groups)) {
     my_group = my_groups[group_index]
@@ -691,7 +695,7 @@ regression = function(
       }
       
       for (indep_index in 1:length(indep_list)){
-        
+      	# indep_index = 1
         model_dt = dep_var_dat[complete.cases(dep_var_dat[,unique(c(indep_list[[indep_index]], unlist(this_groups_model_comparison_list))), with = FALSE]),]
         
         my_indep_name = names(indep_list)[indep_index]
@@ -724,7 +728,7 @@ regression = function(
           }
         }
         
-        model_dt = droplevels(model_dt) # don't want extra levels hanging aroung
+        model_dt = droplevels(model_dt) # don't want extra levels hanging around
         
         model_str = model_function_w_family(model_function(dep_var, indep_var))
         
@@ -766,46 +770,64 @@ regression = function(
             Warning_Msg = try_model$warn_msg
           )
           
-          # if there are multiple indep_vars we need to compare to a null model for significance
-          if(length(indep_var) > 1){
-            null_model_str = model_function_w_family(model_function(dep_var, "NULL"))
-            try_null = try_error_warning(null_model_str, my_env = environment())
-            
-            if(!try_null$error){
-              a1 <- anova(my_model, try_null$return_value, test='LRT')
-              a1_columns = names(a1)
-              a1_pValue_column = a1_columns[grepl('Pr(>Chi)', a1_columns, fixed = T) | 
-                                              grepl('P(>Chi)', a1_columns, fixed = T) |
-                                              grepl('P(>|Chi|)', a1_columns, fixed = T)]
-              
-              pval <- a1[2, a1_pValue_column]
-            } else {
-              pval = NA
-            }
-            
-            if(is_coxph){
-              total_e = sum(model_dt[[event_col]] == 1)
-              total_ne = sum(model_dt[[event_col]] == 0)
-              my_n = paste0(total_e, ":", total_ne)
-            } else {
-              my_n = nrow(model_dt)
-            }
-            
-            combined_dt = data.table(
-              Independent = my_indep_name,
-              Dependent = dep_var,
-              Group = my_group,
-              Independent_Var = paste0(indep_var, collapse = ","),
-              Coefficient_Name = "Combined",
-              pValue = pval,
-              N = my_n,
-              String = null_model_str,
-              Error = try_null$error,
-              Warning = try_null$warn,
-              Error_Msg = try_null$error_msg,
-              Warning_Msg = try_null$warn_msg,
-              Complete_Model = TRUE
-            )
+          prediction_clm = paste0(model_name, "_Prediction")
+          
+          model_dt[[prediction_clm]] = predict(my_model, model_dt)
+          prediction_model_str = model_function_w_family(model_function(dep_var, prediction_clm))
+          try_model = try_error_warning(prediction_model_str, my_env = environment())
+          my_model = try_model$return_value
+          
+          if(nrow(predictions_dt) == 0){
+          	predictions_dt = model_dt[,c(sample_clm, prediction_clm), with = F]
+          	
+          } else {
+          	predictions_dt = merge(predictions_dt, model_dt[,c(sample_clm, prediction_clm), with = F], by = sample_clm, all=T)
+          }
+          
+          # if we predict using the model then we can get the effect size
+          if ( length(indep_var) > 1 ){
+          	
+          	
+          	if ( try_model$error ){
+          		combined_dt = data.table(
+          			Independent = my_indep_name,
+          			Dependent = dep_var,
+          			Group = my_group,
+          			Independent_Var = paste0(indep_var, collapse = ","),
+          			Coefficient_Name = prediction_clm,
+          			String = prediction_model_str,
+          			Error = try_model$error,
+          			Warning = try_model$warn,
+          			Error_Msg = try_model$error_msg,
+          			Warning_Msg = try_model$warn_msg,
+          			Complete_Model = TRUE
+          		)
+          		
+          		if ( is_coxph ){
+          			combined_dt$Events = sum(model_dt[[event_col]] == 1)
+          			combined_dt$Non_Events = sum(model_dt[[event_col]] == 0)
+          		} else {
+          			combined_dt$N = nrow(model_dt)
+          		}
+          		
+          	} else {
+          		
+          		my_model = try_model$return_value
+          	  
+          		combined_dt = data.table(
+          			Independent = my_indep_name,
+          			Dependent = dep_var,
+          			Group = my_group,
+          			Independent_Var = paste0(indep_var, collapse = ","),
+          			get_stats(my_model = my_model),
+          			String = prediction_model_str,
+          			Error = try_model$error,
+          			Warning = try_model$warn,
+          			Error_Msg = try_model$error_msg,
+          			Warning_Msg = try_model$warn_msg,
+          			Complete_Model = TRUE
+          		)
+          	}
             my_dt$Complete_Model = FALSE # need a way to indicate that the reported pvalue only represent some on the coefficients
             
             my_dt = rbindlist(list(my_dt, combined_dt), use.names = T, fill = T)
@@ -932,17 +954,28 @@ regression = function(
       )
     }
     
-    if(write_files) fwrite(comp_dt, model_comparison_path, quote = FALSE, sep = "\t", col.names = TRUE, na = "NA")
+    if(write_files) {
+
+    }
     a("Done with regression")
     a("")
     readme_content = readLines(readme_path)
-    if(!write_files) file.remove(readme_path)
-    return(list(stats = pvalue_dt, model_comp = comp_dt, readme = readme_content))
+    if ( write_files ){	
+    	fwrite(comp_dt, model_comparison_path, quote = FALSE, sep = "\t", col.names = TRUE, na = "NA")
+    	fwrite(predictions_dt, model_prediction_path, quote = FALSE, sep = "\t", col.names = TRUE, na = "NA")
+    } else{
+    	file.remove(readme_path)
+    }
+    return(list(stats = pvalue_dt, model_comp = comp_dt, readme = readme_content, predictions = predictions_dt))
   } else {
     a("Done with regression")
     a("")
     readme_content = readLines(readme_path)
-    if(!write_files) file.remove(readme_path)
-    return(list(stats = pvalue_dt, readme = readme_content, models = output_models))
+    if ( write_files ){	
+    	fwrite(predictions_dt, model_prediction_path, quote = FALSE, sep = "\t", col.names = TRUE, na = "NA")
+    } else {
+    	file.remove(readme_path)
+    }
+    return(list(stats = pvalue_dt, readme = readme_content, models = output_models, predictions = predictions_dt))
   }
 }
