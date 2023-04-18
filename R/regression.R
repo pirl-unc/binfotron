@@ -35,6 +35,19 @@
 #' @param event_col For coxph.  The name of the column from which to draw the event 
 #'   information.  The column should only contain integers of 1 and 0.  If specified, 
 #'   this column needs to be present in \code{input_dt}.
+#' @param fdr_by_columns Passed to \code{\link{binfotron::calc_fdr}}. Optional 
+#' character vector of column names to specify what should be group together in 
+#' the fdr correction using the data.table "by" option.  Leaving this blank will 
+#' just apply the correction to all of the data values. "Group" is a common value
+#' to use here.
+#' @param fdr_by_columns_for_model_comp Passed to \code{\link{binfotron::calc_fdr}}. 
+#' Optional character vector of column names to specify what should be group together 
+#' in the fdr correction of the model comparison stats using the data.table "by" 
+#' option.  Leaving this blank will just apply the correction to all of the data 
+#' values. "Group" is a common value to use here.
+#' @param fdr_method Passed to \code{\link{binfotron::calc_fdr}}. String to tell 
+#' what method to use to FDR correct. Must be one of the values in 
+#' \code{stats::p.adjust.methods}.
 #' @param inclusion_list List to specify the samples that should be kept.
 #'   For example \code{list(pathology_T_stage = c('T1', 'T2', 'T3'), is_asian = c(TRUE))} 
 #'   would drop samples in which the value for the column named 'pathology_T_stage' 
@@ -66,23 +79,11 @@
 #' @param my_grouping This string is the name of the column you want to use to split 
 #'   the data into groups. If specified, this column needs to present in \code{input_dt}.
 #' @param output_dir Path to the output directory. The parent directory to the path must exist.
+#' @param save_models Boolean on whether you would like to save the models in individual rds files named <base_file_name>_<group_name>_<indep_list_name> .
+#' @param sample_clm String to indicate the name of the column for sample names. Only used to output predictions.
 #' @param time_col For coxph.  The name of the column from which to draw the time 
 #'   information.  If specified, this column needs to present in \code{input_dt}.
-#' @param fdr_by_columns Passed to \code{\link{binfotron::calc_fdr}}. Optional 
-#' character vector of column names to specify what should be group together in 
-#' the fdr correction using the data.table "by" option.  Leaving this blank will 
-#' just apply the correction to all of the data values. "Group" is a common value
-#' to use here.
-#' @param fdr_by_columns_for_model_comp Passed to \code{\link{binfotron::calc_fdr}}. 
-#' Optional character vector of column names to specify what should be group together 
-#' in the fdr correction of the model comparison stats using the data.table "by" 
-#' option.  Leaving this blank will just apply the correction to all of the data 
-#' values. "Group" is a common value to use here.
-#' @param fdr_method Passed to \code{\link{binfotron::calc_fdr}}. String to tell 
-#' what method to use to FDR correct. Must be one of the values in 
-#' \code{stats::p.adjust.methods}.
 #' @param write_files Boolean on whether you would like to write the output files.
-#' @param save_models Boolean on whether you would like to save the models in individual rds files named <base_file_name>_<group_name>_<indep_list_name> .
 #' 
 #' @return List containing several outputs: 
 #' \enumerate{
@@ -133,9 +134,10 @@ regression = function(
   },
   my_grouping = NULL, # "Tissue"
   output_dir = ".",
+  sample_clm = "Run_ID",
+  save_models = FALSE,
   time_col = "OS_d",
-  write_files = TRUE,
-  save_models = FALSE
+  write_files = TRUE
 ){
   
   library(checkmate)
