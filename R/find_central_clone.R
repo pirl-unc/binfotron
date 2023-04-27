@@ -307,7 +307,7 @@ find_central_elements_by_cluster <- function(
   	
   	gmt_file_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method, "_gmt.txt"))
   	central_elements_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method, "_features.tsv"))
-  	ranked_central_elements_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method, "_ranked.tsv"))
+  	ranked_central_elements_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method, "_ranks.tsv"))
   	heatmap_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method,  "_heatmap.pdf"))
   	heatmap_selection_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method, "_heatmap_selection.pdf"))
   	cumulative_variance_output_path = file.path(output_dir, paste0(file_prefix, "_", c_method, "_variance.jpg"))
@@ -1057,7 +1057,7 @@ write_central_elements_table = function(
 write_ranked_central_elements_table = function(
     central_elements, 
     rank_data, 
-    output_path=file.path(getwd(), "ranked_unique_central_elements_ranked.tsv"),
+    output_path=file.path(getwd(), "ranked_unique_central_elements_ranks.tsv"),
     display_output=F
 ){
   #find the first cluster that contains each unique central element
