@@ -7,7 +7,7 @@
 write_ranked_central_elements_table(
   central_elements,
   rank_data,
-  output_path = file.path(getwd(), "ranked_unique_central_elements_ranked.tsv"),
+  output_path = file.path(getwd(), "ranked_unique_central_elements_ranks.tsv"),
   display_output = F
 )
 }
