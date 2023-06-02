@@ -12,6 +12,7 @@ import_model_data(
   set_clm = "Set",
   sample_key = binfotron::get_default_sample_key(),
   indep_vars = NULL,
+  clinical_vars = NULL,
   dep_vars = NULL
 )
 }
@@ -29,6 +30,8 @@ import_model_data(
 \item{sample_key}{Column name to use as the sample key to merge all matrices}
 
 \item{indep_vars}{Character string of column names for the independent variables}
+
+\item{clinical_vars}{Character string of column names for the clinical variables. These will be added on in addition to the indep_vars.}
 
 \item{dep_vars}{Character string of column names for the dependent variables}
 

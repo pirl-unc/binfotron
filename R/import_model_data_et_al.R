@@ -20,6 +20,7 @@
 #' @param set_clm Column name to indicate which samples are in "Validation" vs "Discovery" sets
 #' @param sample_key Column name to use as the sample key to merge all matrices
 #' @param indep_vars Character string of column names for the independent variables
+#' @param clinical_vars Character string of column names for the clinical variables. These will be added on in addition to the indep_vars.
 #' @param dep_vars Character string of column names for the dependent variables
 #' 
 #' @export
@@ -31,6 +32,7 @@ import_model_data = function(
 	set_clm = "Set",
 	sample_key = binfotron::get_default_sample_key(),
 	indep_vars = NULL,
+	clinical_vars = NULL,
 	dep_vars = NULL
 ){
 	
@@ -43,6 +45,7 @@ import_model_data = function(
 	
 	cat(paste0("dep_vars: ", paste0( dep_vars, collapse= ", "), "\n"))
 	cat(paste0("indep_vars: ", paste0( indep_vars, collapse= ", "), "\n"))
+	cat(paste0("clinical_vars: ", paste0( clinical_vars, collapse= ", "), "\n"))
 	import_clms = c(sample_key, set_clm, dep_vars, indep_vars)
 	if (any(duplicated(import_clms))){
 		duplicated_clms = import_clms[duplicated(import_clms)]
@@ -54,7 +57,7 @@ import_model_data = function(
 	import_df = serial_import(
 		import_paths = import_paths,
 		sample_key = sample_key,
-		import_clms = import_clms
+		import_clms = c(import_clms, clinical_vars)
 	)
 		
 		

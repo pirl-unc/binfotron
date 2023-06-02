@@ -11,7 +11,7 @@ devtools::install_github("Benjamin-Vincent-Lab/binfotron")
 
 Or for a specific version:
 ``` r
-devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.9.2")
+devtools::install_github("Benjamin-Vincent-Lab/binfotron", ref = "0.9.3")
 ```
 
 Use the package documentation for help:
