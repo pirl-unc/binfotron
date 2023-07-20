@@ -13,7 +13,7 @@
 #' 
 #' @param input_dt A data.table that includes all columns of data needed to do the 
 #'   analysis:  \code{names(indep_list)}, dep_vars (for glm), \code{names(inclusion_list)},
-#'   event_col & time_col (for coxph), \code{names(unique(unlist(model_comparison_list))},
+#'   event_clm & time_clm (for coxph), \code{names(unique(unlist(model_comparison_list))},
 #'   and my_grouping.
 #' @param indep_list Required named list of column names to use as the independent 
 #'   variable. Names of the list will be used to name the output stats.
@@ -32,7 +32,7 @@
 #'   variable for coxph is survival.  Possible values here should be of the form: 
 #'   \code{'Gamma("identity")'} or \code{'gaussian'} and can include anything accepted 
 #'   \code{\link{glm}}.
-#' @param event_col For coxph.  The name of the column from which to draw the event 
+#' @param event_clm For coxph.  The name of the column from which to draw the event 
 #'   information.  The column should only contain integers of 1 and 0.  If specified, 
 #'   this column needs to be present in \code{input_dt}.
 #' @param fdr_by_columns Passed to \code{\link{binfotron::calc_fdr}}. Optional 
@@ -74,14 +74,14 @@
 #'   }} \cr 
 #'   coxph example: \cr 
 #'   \code{model_function = function(dep_var = "", indep_vars = "NULL"){ \cr 
-#'      paste0("coxph(Surv(", time_col,", ", event_col, ") ~ ",  paste0(indep_vars, collapse = " + "), ", data = model_dt)") \cr 
+#'      paste0("coxph(Surv(", time_clm,", ", event_clm, ") ~ ",  paste0(indep_vars, collapse = " + "), ", data = model_dt)") \cr 
 #'   }} \cr 
 #' @param my_grouping This string is the name of the column you want to use to split 
 #'   the data into groups. If specified, this column needs to present in \code{input_dt}.
 #' @param output_dir Path to the output directory. The parent directory to the path must exist.
 #' @param save_models Boolean on whether you would like to save the models in individual rds files named <base_file_name>_<group_name>_<indep_list_name> .
 #' @param sample_clm String to indicate the name of the column for sample names. Only used to output predictions.
-#' @param time_col For coxph.  The name of the column from which to draw the time 
+#' @param time_clm For coxph.  The name of the column from which to draw the time 
 #'   information.  If specified, this column needs to present in \code{input_dt}.
 #' @param write_files Boolean on whether you would like to write the output files.
 #' 
@@ -122,7 +122,7 @@ regression = function(
   combined_group_name = "All",
   dep_vars = NULL,
   dep_var_families = NULL,
-  event_col = "OS_e",
+  event_clm = "OS_e",
   fdr_by_columns = NULL,
   fdr_by_columns_for_model_comp = NULL,
   fdr_method = "BH",
@@ -136,7 +136,7 @@ regression = function(
   output_dir = ".",
   sample_clm = "Run_ID",
   save_models = FALSE,
-  time_col = "OS_d",
+  time_clm = "OS_d",
   write_files = TRUE
 ){
   
@@ -209,29 +209,29 @@ regression = function(
     
     library(survival)
     
-    input_dt = input_dt[complete.cases(input_dt[ , .SD, .SDcol = c(event_col, time_col)]),]
+    input_dt = input_dt[complete.cases(input_dt[ , .SD, .SDcol = c(event_clm, time_clm)]),]
     
     is_coxph = TRUE
     dep_vars = "Survival"
-    check_character(time_col, max.len = 1, null.ok = TRUE)
-    check_character(event_col, max.len = 1, null.ok = TRUE)
+    check_character(time_clm, max.len = 1, null.ok = TRUE)
+    check_character(event_clm, max.len = 1, null.ok = TRUE)
     
-    if(time_col %ni% names(input_dt)) {
-      stop(paste0("coxph time_col, ", time_col,", can not be found in input_dt."))
+    if(time_clm %ni% names(input_dt)) {
+      stop(paste0("coxph time_clm, ", time_clm,", can not be found in input_dt."))
     }
-    if(class(input_dt[[time_col]]) %ni% c("integer", "numeric")) {
-      stop(paste0("coxph time_col, ", time_col,", on input_dt should be of class integer or numeric."))
+    if(class(input_dt[[time_clm]]) %ni% c("integer", "numeric")) {
+      stop(paste0("coxph time_clm, ", time_clm,", on input_dt should be of class integer or numeric."))
     }
-    if(any(input_dt[[time_col]] < 0 )) {
-      stop(paste0("coxph time_col, ", time_col,", on input_dt should not have values less than 0."))
-    }
-    
-    if(event_col %ni% names(input_dt)) {
-      stop(paste0("coxph event_col, ", event_col,", can not be found in input_dt."))
+    if(any(input_dt[[time_clm]] < 0 )) {
+      stop(paste0("coxph time_clm, ", time_clm,", on input_dt should not have values less than 0."))
     }
     
-    if(any(input_dt[[event_col]] %ni% 0:1 )) {
-      stop(paste0("coxph event_col, ", event_col,", can only have values 1 and 0."))
+    if(event_clm %ni% names(input_dt)) {
+      stop(paste0("coxph event_clm, ", event_clm,", can not be found in input_dt."))
+    }
+    
+    if(any(input_dt[[event_clm]] %ni% 0:1 )) {
+      stop(paste0("coxph event_clm, ", event_clm,", can only have values 1 and 0."))
     }
     
   } else if (grepl("glm",model_function())){
@@ -566,7 +566,7 @@ regression = function(
     required_col = unique(c(
       my_grouping,
       names(inclusion_list), 
-      time_col, event_col, 
+      time_clm, event_clm, 
       unlist(indep_list), 
       unlist(model_comparison_list))
     )
@@ -670,7 +670,7 @@ regression = function(
       a(paste0("  - Dependent variable: ", dep_var))
       
       if(is_coxph){
-        dep_var_dat = group_dt[complete.cases(group_dt[, .SD, .SDcols = c(time_col, event_col)]), ]  # make subdat for this dependent variable
+        dep_var_dat = group_dt[complete.cases(group_dt[, .SD, .SDcols = c(time_clm, event_clm)]), ]  # make subdat for this dependent variable
       } else {
         # glm model string
         dep_var_dat = group_dt[complete.cases(group_dt[[dep_var]]), ]  # make subdat for this dependent variable
@@ -806,8 +806,8 @@ regression = function(
           		)
           		
           		if ( is_coxph ){
-          			combined_dt$Events = sum(model_dt[[event_col]] == 1)
-          			combined_dt$Non_Events = sum(model_dt[[event_col]] == 0)
+          			combined_dt$Events = sum(model_dt[[event_clm]] == 1)
+          			combined_dt$Non_Events = sum(model_dt[[event_clm]] == 0)
           		} else {
           			combined_dt$N = nrow(model_dt)
           		}

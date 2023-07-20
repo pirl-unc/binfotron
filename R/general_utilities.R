@@ -314,6 +314,37 @@ pvalue_stars = function(
 }
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# pvalue_nums
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @title Return string indicating significance level bin of p.value provided
+#' 
+#' @description Method to determine significance level bin and return a formatted string. Duplicate of binfotron::pvalue_stars but returns values like '<= 0.01'  rather than '**'
+#' 
+#' 
+#' @param p.value double representing the p.value to obtain significance level for
+#' @param barely_sig double of value for barely significant level
+#' @param decent_sig double of value for reasonably significant level
+#' @param whoa_nelly double of value for very significant level
+#' 
+#' @return Returns string representing the significance bin of this p.value
+#' 
+#' @export
+#' 
+pvalue_nums <- function(p.value, additional_sig = NA, barely_sig = 0.05, decent_sig = 0.01, whoa_nelly = 0.001){
+	if (p.value <= whoa_nelly) {
+		return(paste("<=",whoa_nelly))
+	} else if (p.value <= decent_sig) {
+		return(paste("<=", decent_sig))
+	} else if (p.value <= barely_sig) {
+		return(paste("<=", barely_sig))
+	} else if ( !is.na(additional_sig) && p.value <= additional_sig){
+		return(paste("<=", additional_sig))
+	} else {
+		return(paste(">", barely_sig))
+	}
+}
+
 
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' is_not_null

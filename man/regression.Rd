@@ -12,7 +12,7 @@ regression(
   combined_group_name = "All",
   dep_vars = NULL,
   dep_var_families = NULL,
-  event_col = "OS_e",
+  event_clm = "OS_e",
   fdr_by_columns = NULL,
   fdr_by_columns_for_model_comp = NULL,
   fdr_method = "BH",
@@ -26,14 +26,14 @@ regression(
   output_dir = ".",
   sample_clm = "Run_ID",
   save_models = FALSE,
-  time_col = "OS_d",
+  time_clm = "OS_d",
   write_files = TRUE
 )
 }
 \arguments{
 \item{input_dt}{A data.table that includes all columns of data needed to do the 
 analysis:  \code{names(indep_list)}, dep_vars (for glm), \code{names(inclusion_list)},
-event_col & time_col (for coxph), \code{names(unique(unlist(model_comparison_list))},
+event_clm & time_clm (for coxph), \code{names(unique(unlist(model_comparison_list))},
 and my_grouping.}
 
 \item{indep_list}{Required named list of column names to use as the independent 
@@ -58,7 +58,7 @@ variable for coxph is survival.  Possible values here should be of the form:
 \code{'Gamma("identity")'} or \code{'gaussian'} and can include anything accepted 
 \code{\link{glm}}.}
 
-\item{event_col}{For coxph.  The name of the column from which to draw the event 
+\item{event_clm}{For coxph.  The name of the column from which to draw the event 
 information.  The column should only contain integers of 1 and 0.  If specified, 
 this column needs to be present in \code{input_dt}.}
 
@@ -106,7 +106,7 @@ glm example: \cr
 }} \cr 
 coxph example: \cr 
 \code{model_function = function(dep_var = "", indep_vars = "NULL"){ \cr 
-   paste0("coxph(Surv(", time_col,", ", event_col, ") ~ ",  paste0(indep_vars, collapse = " + "), ", data = model_dt)") \cr 
+   paste0("coxph(Surv(", time_clm,", ", event_clm, ") ~ ",  paste0(indep_vars, collapse = " + "), ", data = model_dt)") \cr 
 }} \cr}
 
 \item{my_grouping}{This string is the name of the column you want to use to split 
@@ -118,7 +118,7 @@ the data into groups. If specified, this column needs to present in \code{input_
 
 \item{save_models}{Boolean on whether you would like to save the models in individual rds files named <base_file_name>_<group_name>_<indep_list_name> .}
 
-\item{time_col}{For coxph.  The name of the column from which to draw the time 
+\item{time_clm}{For coxph.  The name of the column from which to draw the time 
 information.  If specified, this column needs to present in \code{input_dt}.}
 
 \item{write_files}{Boolean on whether you would like to write the output files.}
