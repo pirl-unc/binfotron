@@ -27,7 +27,8 @@ regression(
   sample_clm = "Run_ID",
   save_models = FALSE,
   time_clm = "OS_d",
-  write_files = TRUE
+  write_files = TRUE,
+  include_dep_var_in_prediction_name = FALSE
 )
 }
 \arguments{
@@ -154,7 +155,6 @@ This function utilizes one of either \code{\link{glm}} or \code{\link{coxph}} me
 \section{Todos}{
 
 \itemize{
-  \item This is new so will need some debugging.
   \item Support GAMLSS and ability to determine its own family??
   \item Stats output sometimes has blank lines in it
 }

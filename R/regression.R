@@ -136,7 +136,8 @@ regression = function(
   sample_clm = "Run_ID",
   save_models = FALSE,
   time_clm = "OS_d",
-  write_files = TRUE
+  write_files = TRUE,
+  include_dep_var_in_prediction_name = FALSE
 ){
   
   library(checkmate)
@@ -273,6 +274,11 @@ regression = function(
     # length of depvar family needs to be either 1 or mathc the number of dep_vars
     if(length(dep_var_families) != 1 & (length(dep_var_families) != length(dep_vars)))
       stop("Length of dep_var_families must be of length 1, which would be applied to all dep_vars OR the same length of dep_vars")
+  
+    if ( length(dep_vars) > 1 ){
+    	include_dep_var_in_prediction_name = TRUE
+    }
+    
     
     if(length(dep_var_families) == 1)
       dep_var_families = rep(dep_var_families, length(dep_vars))
@@ -281,6 +287,8 @@ regression = function(
   } else {
     stop("Models strings must start with 'glm' or 'coxph'.")
   }
+  
+  
   
   # check indep for 
   for(indep_column in indep_columns){
@@ -752,7 +760,7 @@ regression = function(
         } else {
           
           my_model = try_model$return_value
-          if(length(dep_vars) > 1)){
+          if(include_dep_var_in_prediction_name){
           	model_name = paste0(my_group,"__", dep_var, "_vs_", my_indep_name)
           } else {
           	model_name = paste0(my_group,"__",my_indep_name)
@@ -945,10 +953,12 @@ regression = function(
     )
   }
   
+  pvalue_dt = decode_clms(pvalue_dt, skip_clms = "String")
+  
   if(write_files) fwrite(pvalue_dt, stats_path, quote = FALSE, sep = "\t", col.names = TRUE, na = "NA")
   
   if(nrow(comp_dt) > 0){
-    
+  	comp_dt = decode_clms(comp_dt)
     if(fdr_method %in% p.adjust.methods[p.adjust.methods != "none"]){
       a("FDR correcting model comparisons.")
       comp_dt = calc_fdr(  
