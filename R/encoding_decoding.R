@@ -57,7 +57,7 @@ decode_special_char = function(char_vector) {
 
 
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' decode_columns
+#' decode_clms
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #'
 #' @title Decodes data.frame or data.table using decode_special_char
@@ -70,7 +70,7 @@ decode_special_char = function(char_vector) {
 #' @param replace_existing_clm Boolean to indicate whether encoded columns should be overwritten or written as <clm_name>_Decoded
 #' 
 #' @export
-decode_columns = function( my_df, skip_clms = c(), replace_existing_clm = FALSE){
+decode_clms = function( my_df, skip_clms = c(), replace_existing_clm = FALSE){
 	for (clm_name in names(my_df)) {
 		if ( ! clm_name %in% skip_clms ){
 			clm_values = my_df[[clm_name]]
