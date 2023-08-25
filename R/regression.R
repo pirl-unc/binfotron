@@ -100,7 +100,6 @@
 #' 
 #' @section Todos:
 #' \itemize{
-#'   \item This is new so will need some debugging.
 #'   \item Support GAMLSS and ability to determine its own family??
 #'   \item Stats output sometimes has blank lines in it
 #' }
@@ -327,7 +326,8 @@ regression = function(
   
   # convert any character columns into factors
   
-  if(!is.null(dep_vars) && is.na(dep_vars)) dep_vars = NULL
+  if(!is.null(dep_vars) && all(is.na(dep_vars))) dep_vars = NULL
+  
   # checkmate 
   # if any dep, indep var, or model comparison column is all NA or "" then this needs to stop
   
@@ -752,8 +752,12 @@ regression = function(
         } else {
           
           my_model = try_model$return_value
+          if(length(dep_vars) > 1)){
+          	model_name = paste0(my_group,"__", dep_var, "_vs_", my_indep_name)
+          } else {
+          	model_name = paste0(my_group,"__",my_indep_name)
+          }
           
-          model_name = paste0(my_group,"__",my_indep_name)
           model_name %<>% gsub(" ", "_", .)
           output_models[model_name] = list(my_model)
           
