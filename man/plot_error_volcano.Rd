@@ -13,6 +13,7 @@ plot_error_volcano(
   color_scheme = scale_color_viridis_d(option = "rocket", begin = 0.8, end = 0.1),
   error_clm_lower = NA,
   error_clm_upper = NA,
+  gg_add_on = theme_minimal(),
   independent_clm = NA,
   lab_color = "Q-Value",
   lab_x = "Hazard Ratio (Log10)",
@@ -21,11 +22,11 @@ plot_error_volcano(
   label_nudge_x = 0.025,
   label_nudge_y = -0.15,
   label_size = 1.5,
+  max_labels = 20,
   output_path = NA,
   plot_title = "Significance vs. Hazard Ratio",
   size_height = 4.5,
-  size_width = 6,
-  max_labels = 20
+  size_width = 6
 )
 }
 \arguments{
@@ -45,6 +46,8 @@ plot_error_volcano(
 
 \item{error_clm_upper}{column name containing upper bound of error bars}
 
+\item{gg_add_on}{ggplot elements to add on to plot. Defaults to \code{theme_minimal()}}
+
 \item{independent_clm}{column name in plot_df from which to pull values for reporting on removed extreme values. If not set, and extreme values are removed, only the number of removed observations will be reported.}
 
 \item{lab_color}{String for labeling color legend}
@@ -56,6 +59,8 @@ plot_error_volcano(
 \item{label_clm}{column name in plot_df from which to pull labels for points}
 
 \item{label_size}{numeric value to use for the size of the point labels}
+
+\item{max_labels}{Integer to set the max number of labels that will be shown}
 
 \item{output_path}{Output path for plot}
 

@@ -9,17 +9,18 @@ plot_waterfall(
   colors_clm = NA,
   features_clm = "Independant",
   fill_scheme = scale_fill_viridis_d(option = "rocket", begin = 0.8, end = 0.3),
+  gg_add_on = theme_minimal(),
   hr_clm = "Hazard_Ratio",
   lab_color = "Q-Value",
   lab_x = "Features",
   lab_y = "Hazard Ratio ( Log10 )",
+  log10_scale = TRUE,
   output_path = NA,
   plot_title = title_prefix,
   sig_clm = "qValue",
   sig_threshold = NA,
   size_height = 5.5,
-  size_width = 5,
-  log10_scale = TRUE
+  size_width = 5
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ plot_waterfall(
 
 \item{fill_scheme}{ggplot function to specify discrete fills}
 
+\item{gg_add_on}{ggplot elements to add on to plot. Defaults to \code{theme_minimal()}}
+
 \item{hr_clm}{column name in plot_df corresponding to hazard ratios}
 
 \item{lab_color}{String for labeling color legend}
@@ -38,6 +41,8 @@ plot_waterfall(
 \item{lab_x}{String for labeling x axis}
 
 \item{lab_y}{String for labeling y axis}
+
+\item{log10_scale}{Boolean to indicate whether or not the y axis will be shown on log10 scale.}
 
 \item{output_path}{Output path for plot}
 

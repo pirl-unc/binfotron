@@ -12,12 +12,14 @@
 #' @param color_scheme ggplot function to specify discrete colors
 #' @param error_clm_lower column name containing lower bound of error bars
 #' @param error_clm_upper column name containing upper bound of error bars
+#' @param gg_add_on ggplot elements to add on to plot. Defaults to \code{theme_minimal()}
 #' @param independent_clm column name in plot_df from which to pull values for reporting on removed extreme values. If not set, and extreme values are removed, only the number of removed observations will be reported.
 #' @param lab_color String for labeling color legend
 #' @param lab_x String for labeling x axis
 #' @param lab_y String for labeling y axis
 #' @param label_clm column name in plot_df from which to pull labels for points
 #' @param label_size numeric value to use for the size of the point labels
+#' @param max_labels Integer to set the max number of labels that will be shown
 #' @param output_path Output path for plot
 #' @param plot_title String for plot title
 #' @param size_height Numeric to specify plot height
@@ -36,6 +38,7 @@ plot_error_volcano = function(
 	color_scheme=scale_color_viridis_d(option="rocket",begin = 0.8, end=0.1),
 	error_clm_lower = NA,
 	error_clm_upper = NA,
+	gg_add_on = theme_minimal(),
 	independent_clm=NA,
 	lab_color="Q-Value",
 	lab_x="Hazard Ratio (Log10)",
@@ -44,11 +47,11 @@ plot_error_volcano = function(
 	label_nudge_x = 0.025,
 	label_nudge_y = -0.15,
 	label_size=1.5,
+	max_labels = 20,
 	output_path=NA,
 	plot_title="Significance vs. Hazard Ratio",
 	size_height = 4.5,
-	size_width = 6,
-	max_labels = 20
+	size_width = 6
 ){
 	#for easier reference down the line, get colnames from plot_df
 	dtp_clms <- colnames(plot_df)
@@ -110,6 +113,8 @@ plot_error_volcano = function(
 		base_plot <- base_plot + guides(alpha="none") +
 			color_scheme
 	}
+	
+	if ( !is.null(gg_add_on) ) base_plot = base_plot + gg_add_on
 	
 	#if the graph is to be printed to file, do so now
 	if(!missing(output_path)) ggsave(output_path, base_plot, width = size_width, height = size_height)

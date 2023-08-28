@@ -9,10 +9,12 @@
 #' @param colors_clm column name in plot_df of categorical variable to use for coloring of bars ( typically representing significance levels )
 #' @param features_clm column name in plot_df corresponding to features
 #' @param fill_scheme ggplot function to specify discrete fills
+#' @param gg_add_on ggplot elements to add on to plot. Defaults to \code{theme_minimal()}
 #' @param hr_clm column name in plot_df corresponding to hazard ratios
 #' @param lab_color String for labeling color legend
 #' @param lab_x String for labeling x axis
 #' @param lab_y String for labeling y axis
+#' @param log10_scale Boolean to indicate whether or not the y axis will be shown on log10 scale.
 #' @param output_path Output path for plot
 #' @param plot_title String for plot title
 #' @param sig_clm column name in plot_df corresponding to q-values, only used if sig_threshold is also set
@@ -28,17 +30,19 @@ plot_waterfall <- function(
 	colors_clm=NA,
 	features_clm="Independant",
 	fill_scheme=scale_fill_viridis_d(option="rocket",begin = 0.8, end=0.3), 
+	gg_add_on = theme_minimal(),
 	hr_clm="Hazard_Ratio",
 	lab_color="Q-Value",
 	lab_x="Features",
 	lab_y="Hazard Ratio ( Log10 )",
+	log10_scale = TRUE,
 	output_path=NA,
 	plot_title=title_prefix,
 	sig_clm="qValue",
 	sig_threshold=NA,
 	size_height = 5.5,
-	size_width = 5,
-	log10_scale = TRUE
+	size_width = 5
+	
 ){
 	
 	# do hr_clm and features_clm exist in data?
@@ -79,6 +83,8 @@ plot_waterfall <- function(
 		labs(title=plot_title, x=lab_x, y=lab_y, fill=lab_color) + # add labels for title, x and y axis
 		fill_scheme + #apply nicer color scheme
 		theme(plot.title = element_text(hjust = 0.5)) # center title
+	
+	if ( !is.null(gg_add_on) ) base_plot = base_plot + gg_add_on
 	
 	#print it to file if desired
 	if(!missing(output_path)) ggsave(output_path, base_plot, width = size_width, height = size_height)

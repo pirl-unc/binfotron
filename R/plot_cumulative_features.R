@@ -7,6 +7,7 @@
 #' 
 #' 
 #' @param plot_df Dataframe containing at a minimum pvalue data
+#' @param gg_add_on ggplot elements to add on to plot. Defaults to \code{theme_minimal()}
 #' @param lab_x String for labeling x axis
 #' @param lab_y String for labeling y axis
 #' @param max_features integer representing the maximum number of features to plot. Values above this will be dropped from the plot_df
@@ -23,6 +24,7 @@
 #' 
 plot_cumulative_features <- function( 
 	plot_df, 
+	gg_add_on = theme_minimal(),
 	lab_x="P-Value ( Log10 )",
 	lab_y="Cumulative Feature Count ( Log10 )",
 	max_features=NA,
@@ -68,6 +70,8 @@ plot_cumulative_features <- function(
 		annotate("text", x=.008, y=nrow(plot_df), label="0.01", angle=90) +
 		annotate("text", x=.0405, y=nrow(plot_df), label="0.05", angle=90) #+ 
 	#annotate("text", x=.16, y=nrow(plot_df), label="0.20", angle=90)
+	
+	if ( !is.null(gg_add_on) ) base_plot = base_plot + gg_add_on
 	
 	#print it to file if desired
 	if(!missing(output_path)) ggsave(output_path, base_plot, width = size_width, height = size_height)

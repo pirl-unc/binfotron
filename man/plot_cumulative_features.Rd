@@ -6,6 +6,7 @@
 \usage{
 plot_cumulative_features(
   plot_df,
+  gg_add_on = theme_minimal(),
   lab_x = "P-Value ( Log10 )",
   lab_y = "Cumulative Feature Count ( Log10 )",
   max_features = NA,
@@ -19,6 +20,8 @@ plot_cumulative_features(
 }
 \arguments{
 \item{plot_df}{Dataframe containing at a minimum pvalue data}
+
+\item{gg_add_on}{ggplot elements to add on to plot. Defaults to \code{theme_minimal()}}
 
 \item{lab_x}{String for labeling x axis}
 
