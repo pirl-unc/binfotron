@@ -104,6 +104,7 @@ get_features_from_ranks = function(
 	if (is.null(ranks_count)){
 		indep_vars = ranks_df[[1]]
 	} else {
+		if (ranks_count > nrow(ranks_df)) ranks_count = nrow(ranks_df)
 		indep_vars = ranks_df[[1]][1:ranks_count]
 	}
 	return(indep_vars)

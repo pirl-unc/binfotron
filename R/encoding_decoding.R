@@ -46,14 +46,18 @@ encode_special_char = function(char_vector) {
 decode_special_char = function(char_vector) {
 	sapply(char_vector, function(name) {
 		while (grepl("_hx[0-9A-F]{2}_", name)) {
-			match = regmatches(name, regexpr("_hx[0-9A-F]{2}_", name))[[1]]
-			hex_code = gsub("_hx|_", "", match)
-			char = rawToChar(as.raw(strtoi(hex_code, base = 16L)))
-			name = sub(match, char, name, fixed = TRUE)
+			my_match = regmatches(name, regexpr("_hx[0-9A-F]{2}_", name))
+			if(length(my_match) > 0){
+				my_match = my_match[[1]]
+			  hex_code = gsub("_hx|_", "", my_match)
+			  char = rawToChar(as.raw(strtoi(hex_code, base = 16L)))
+			  name = sub(my_match, char, name, fixed = TRUE)
+			}
 		}
 		return(name)
 	})
 }
+
 
 
 #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
