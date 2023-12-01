@@ -132,26 +132,29 @@ serial_import = function(
 	for (import_path in import_paths){
 		this_df = data.table::fread(import_path, data.table = F)
 		if (!sample_key %in% names(this_df)) stop(paste0("This path does not contain your sample_key, ", sample_key,": ", import_path))
-		if(!is.null(import_clms)) this_df = this_df[, unique(c(sample_key, import_clms[import_clms %in% names(this_df)]))]
-		if (ncol(this_df) == 1) stop(paste0("This file did not have any data you were looking for: ", import_path))
-		# check for duplicated names
-		duplicated_names = names(this_df)[names(this_df) %in% names(import_df)]
-		duplicated_names = duplicated_names[duplicated_names != sample_key]
-		if(length(duplicated_names) > 0){
-			message()
-			message(import_path)
-			message("contained column names that were already present in the other matrices:")
-			message(paste0( duplicated_names, collapse= ", "))
-			message()
-			for (duplicated_name in duplicated_names){
-				names(this_df)[names(this_df) == duplicated_name] = paste0(duplicated_name, "_duplicate")
-			}
-		}
-		
-		if(is.null(import_df)){
-			import_df = this_df
+		if(!is.null(import_clms)) this_df = this_df[, unique(c(sample_key, import_clms[import_clms %in% names(this_df)])), drop = FALSE]
+		if (ncol(this_df) == 1) {
+			warning(paste0("This file did not have any data you were looking for: ", import_path))
 		} else {
-			import_df = merge(import_df, this_df, by = sample_key, all = keep_all_samples)
+			# check for duplicated names
+			duplicated_names = names(this_df)[names(this_df) %in% names(import_df)]
+			duplicated_names = duplicated_names[duplicated_names != sample_key]
+			if(length(duplicated_names) > 0){
+				message()
+				message(import_path)
+				message("contained column names that were already present in the other matrices:")
+				message(paste0( duplicated_names, collapse= ", "))
+				message()
+				for (duplicated_name in duplicated_names){
+					names(this_df)[names(this_df) == duplicated_name] = paste0(duplicated_name, "_duplicate")
+				}
+			}
+			
+			if(is.null(import_df)){
+				import_df = this_df
+			} else {
+				import_df = merge(import_df, this_df, by = sample_key, all = keep_all_samples)
+			}
 		}
 	}
 	
