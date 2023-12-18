@@ -16,7 +16,7 @@ find_low_variance_clms = function(
 	my_df,
 	max_fraction_largest = 0.9,
 	my_key = get_default_sample_key()
-){å
+){
 	potential_drop_clms = character(0)
 	for(clm_num in 1:ncol(my_df)){
 		# clm_num = 2
