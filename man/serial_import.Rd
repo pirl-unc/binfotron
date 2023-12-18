@@ -6,6 +6,7 @@
 \usage{
 serial_import(
   import_paths,
+  df_filters = c(),
   sample_key = binfotron::get_default_sample_key(),
   import_clms = NULL,
   keep_all_samples = FALSE
@@ -13,6 +14,8 @@ serial_import(
 }
 \arguments{
 \item{import_paths}{Vector of paths to import and merge}
+
+\item{df_filters}{Character vector to be parsed in a loop using \code{dplyr::filter}}
 
 \item{sample_key}{Column name to use as the sample key to merge all matrices}
 

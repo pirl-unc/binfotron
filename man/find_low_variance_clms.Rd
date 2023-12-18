@@ -6,7 +6,7 @@
 \usage{
 find_low_variance_clms(
   my_df,
-  max_fraction_largest = max_fraction_largest,
+  max_fraction_largest = 0.9,
   my_key = get_default_sample_key()
 )
 }

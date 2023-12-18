@@ -13,6 +13,7 @@
 #'the top x feature from a columns ranks file.
 #'  
 #' @param import_paths Vector of paths to import and merge
+#' @param df_filters Character vector to be parsed in a loop using \code{dplyr::filter}
 #' @param ranks_feature_path Path to data matrix with feature names in one column and ranks in another.
 #' @param ranks_clm String to indicate which column contains the column ranks
 #' @param ranks_count Integer to indicate how many features to take from the column ranks
@@ -26,6 +27,7 @@
 #' @export
 import_model_data = function(
 	import_paths,
+	df_filters = c(),
 	ranks_feature_path = NULL,
 	ranks_clm = NULL,
 	ranks_count = NULL,
@@ -56,6 +58,7 @@ import_model_data = function(
 	# limit to variables that are in import_clms
 	import_df = serial_import(
 		import_paths = import_paths,
+		df_filters = df_filters,
 		sample_key = sample_key,
 		import_clms = c(import_clms, clinical_vars)
 	)
@@ -117,6 +120,7 @@ get_features_from_ranks = function(
 #' @title Import a vector fo file paths into one matrix.
 #'  
 #' @param import_paths Vector of paths to import and merge
+#' @param df_filters Character vector to be parsed in a loop using \code{dplyr::filter}
 #' @param sample_key Column name to use as the sample key to merge all matrices
 #' @param import_clms Vector of column names to import
 #' @param keep_all_samples TRUE will keep all samples from all imported matrices. FALSE will only keep samples which are in all matrices
@@ -124,6 +128,7 @@ get_features_from_ranks = function(
 #' @export
 serial_import = function(
   import_paths,
+  df_filters = c(),
   sample_key = binfotron::get_default_sample_key(),
   import_clms = NULL,
   keep_all_samples = FALSE
@@ -162,5 +167,10 @@ serial_import = function(
 		missing_clms = import_clms[!(import_clms %in% names(import_df))]
 		if (length(missing_clms) > 0) stop(paste0(c("Your imported data are missing the following columns:", missing_clms), collapse= "\n"))
 	}
+	
+	for (df_filter in df_filters){
+		eval(parse(text = paste0("import_df %<>% dplyr::filter(", df_filter ,")")))
+	}
+	
 	return(import_df)
 }

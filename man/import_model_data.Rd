@@ -6,6 +6,7 @@
 \usage{
 import_model_data(
   import_paths,
+  df_filters = c(),
   ranks_feature_path = NULL,
   ranks_clm = NULL,
   ranks_count = NULL,
@@ -18,6 +19,8 @@ import_model_data(
 }
 \arguments{
 \item{import_paths}{Vector of paths to import and merge}
+
+\item{df_filters}{Character vector to be parsed in a loop using \code{dplyr::filter}}
 
 \item{ranks_feature_path}{Path to data matrix with feature names in one column and ranks in another.}
 
