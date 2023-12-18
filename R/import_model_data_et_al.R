@@ -65,7 +65,7 @@ import_model_data = function(
 		
 		
 	if (!is.null(set_clm)){
-		if (!all(c("Validation","Discovery") %in% import_df[[set_clm]])) stop(paste0("Your set_clm, ", set_clm, ", does not contain 'Discovery' and 'Validation' strings."))
+		if (!all(c("Validation","Discovery") %in% import_df[[set_clm]])) warning(paste0("Your set_clm, ", set_clm, ", does not contain 'Discovery' and 'Validation' strings."))
 		val_df = import_df[import_df[[set_clm]] == "Validation", ]
 		import_df = import_df[import_df[[set_clm]] == "Discovery", ]
 		val_df = val_df[, names(val_df)[names(val_df) != set_clm]]
