@@ -367,7 +367,17 @@ regression = function(
     })
     
     if("return_value" %in% names(my_result)){
-      my_value = my_result$return_value
+      # it is possible to get a Coef of NA without an error or warning having been generated
+      # if one or more coefficients couldn't be calculated, this will error out for all of them ...
+      #   this seems the correct approach as an NA coefficient implies either collinearity or minimal separation in a features values
+      #   so other coefficients may be inaccurately reported, and regardless, the model as-is shouldn't be considered a viable model
+      if ( any(is.na(coef(my_result$return_value))) ) {
+        which_are_na <- coef(my_result$return_value) %>% {names(.)[ is.na(.) ]}
+        my_result <- list(error=paste("NA result from calculation of coefficient."))
+        message(paste0(my_result$error, "( ", paste(which_are_na, collapse=", "), " )"))
+      } else {
+        my_value = my_result$return_value
+      }
     }
     if("warning" %in% names(my_result)){
       a_warn = TRUE
@@ -757,6 +767,7 @@ regression = function(
             Error_Msg = try_model$error_msg,
             Warning_Msg = try_model$warn_msg
           )
+          a( "      * ERROR: ", try_model$error_msg )
         } else {
           
           my_model = try_model$return_value
