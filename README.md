@@ -1,5 +1,6 @@
 The purpose of this package is perform higher level statistical analyses on RNA-Seq and other datasets.
 
+* this package was originally hosted at https://github.com/Benjamin-Vincent-Lab/binfotron and was moved here on 2/13/2024
 
 ## Install
 Restart R Session  
