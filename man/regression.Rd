@@ -13,9 +13,7 @@ regression(
   dep_vars = NULL,
   dep_var_families = NULL,
   event_clm = "OS_e",
-  fdr_by_columns = NULL,
-  fdr_by_columns_for_model_comp = NULL,
-  fdr_method = "BH",
+  fdr_method = NULL,
   inclusion_list = list(),
   model_comparison_list = NULL,
   model_function = function(dep_var = "", indep_vars = "NULL") {
@@ -63,20 +61,7 @@ variable for coxph is survival.  Possible values here should be of the form:
 information.  The column should only contain integers of 1 and 0.  If specified, 
 this column needs to be present in \code{input_dt}.}
 
-\item{fdr_by_columns}{Passed to \code{\link{binfotron::calc_fdr}}. Optional 
-character vector of column names to specify what should be group together in 
-the fdr correction using the data.table "by" option.  Leaving this blank will 
-just apply the correction to all of the data values. "Group" is a common value
-to use here.}
-
-\item{fdr_by_columns_for_model_comp}{Passed to \code{\link{binfotron::calc_fdr}}. 
-Optional character vector of column names to specify what should be group together 
-in the fdr correction of the model comparison stats using the data.table "by" 
-option.  Leaving this blank will just apply the correction to all of the data 
-values. "Group" is a common value to use here.}
-
-\item{fdr_method}{Passed to \code{\link{binfotron::calc_fdr}}. String to tell 
-what method to use to FDR correct. Must be one of the values in 
+\item{fdr_method}{Deprecated. Multiple PValue columns made this overly complicated. Just use \code{\link{binfotron::calc_fdr}} separately.
 \code{stats::p.adjust.methods}.}
 
 \item{inclusion_list}{List to specify the samples that should be kept.
@@ -123,6 +108,10 @@ the data into groups. If specified, this column needs to present in \code{input_
 information.  If specified, this column needs to present in \code{input_dt}.}
 
 \item{write_files}{Boolean on whether you would like to write the output files.}
+
+\item{fdr_by_columns}{Deprecated. Multiple PValue columns made this overly complicated. Just use \code{\link{binfotron::calc_fdr}} separately.}
+
+\item{fdr_by_columns_for_model_comp}{Deprecated. Multiple PValue columns made this overly complicated. Just use \code{\link{binfotron::calc_fdr}} separately.}
 }
 \value{
 List containing several outputs: 

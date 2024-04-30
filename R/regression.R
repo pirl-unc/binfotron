@@ -35,18 +35,9 @@
 #' @param event_clm For coxph.  The name of the column from which to draw the event 
 #'   information.  The column should only contain integers of 1 and 0.  If specified, 
 #'   this column needs to be present in \code{input_dt}.
-#' @param fdr_by_columns Passed to \code{\link{binfotron::calc_fdr}}. Optional 
-#' character vector of column names to specify what should be group together in 
-#' the fdr correction using the data.table "by" option.  Leaving this blank will 
-#' just apply the correction to all of the data values. "Group" is a common value
-#' to use here.
-#' @param fdr_by_columns_for_model_comp Passed to \code{\link{binfotron::calc_fdr}}. 
-#' Optional character vector of column names to specify what should be group together 
-#' in the fdr correction of the model comparison stats using the data.table "by" 
-#' option.  Leaving this blank will just apply the correction to all of the data 
-#' values. "Group" is a common value to use here.
-#' @param fdr_method Passed to \code{\link{binfotron::calc_fdr}}. String to tell 
-#' what method to use to FDR correct. Must be one of the values in 
+#' @param fdr_by_columns Deprecated. Multiple PValue columns made this overly complicated. Just use \code{\link{binfotron::calc_fdr}} separately.
+#' @param fdr_by_columns_for_model_comp Deprecated. Multiple PValue columns made this overly complicated. Just use \code{\link{binfotron::calc_fdr}} separately.
+#' @param fdr_method Deprecated. Multiple PValue columns made this overly complicated. Just use \code{\link{binfotron::calc_fdr}} separately.
 #' \code{stats::p.adjust.methods}.
 #' @param inclusion_list List to specify the samples that should be kept.
 #'   For example \code{list(pathology_T_stage = c('T1', 'T2', 'T3'), is_asian = c(TRUE))} 
@@ -122,9 +113,9 @@ regression = function(
   dep_vars = NULL,
   dep_var_families = NULL,
   event_clm = "OS_e",
-  fdr_by_columns = NULL,
-  fdr_by_columns_for_model_comp = NULL,
-  fdr_method = "BH",
+  # fdr_by_columns = NULL,
+  # fdr_by_columns_for_model_comp = NULL,
+  fdr_method = NULL,
   inclusion_list = list(),
   model_comparison_list = NULL,
   #put warning not to add glm family. we will handle that based on the dependant variable
@@ -142,6 +133,12 @@ regression = function(
   
   library(checkmate)
   
+	if (!is.null(fdr_method)){
+		if (fdr_method != "none"){
+		  stop("No longer supporting FDR correction within this method. Adding multiple PValue columns made this overly complicated. Just use binfotron::calc_fdr separately")
+		}
+	}
+	
   # output paths
   if(!dir.exists(dirname(output_dir))) stop("The parent directory of output_dir does not exist.") # Does dirname(output_dir) exist?
   dir.create(output_dir, showWarnings = F)
@@ -398,9 +395,10 @@ regression = function(
       output_list["Coefficient_Name"] = coefficient_name
       # univariate_df[row_index, "Dependent_Var"] = dep_var
       summary_columns = colnames(coef_mtrx)
+      # for logtest for glm you'd need to do a full vs reduced model
       pValue_column = summary_columns[grepl("Pr(>|t|)", summary_columns, fixed = T) |
                                         grepl("Pr(>|z|)", summary_columns, fixed = T)]
-      output_list["pValue"] = coef_mtrx[coef_index, pValue_column]
+      output_list["Coef_Wald_PValue"] = coef_mtrx[coef_index, pValue_column]
       output_list["Coef"] = coef_mtrx[coef_index, "Estimate"] %>% as.numeric
       
       this_coef_data = my_model$data[[coefficient_name]]
@@ -479,22 +477,19 @@ regression = function(
       
       if(coef_class %in% c("logical", "numeric", "integer", "factor" )){
         confint_list = tryCatch({
-          suppressMessages(
-            list(df = confint(my_model, level = 0.95))
-          )
-        }, warning = function(w) {
-          suppressWarnings(
-            list(df = confint(my_model, level = 0.95), warning = paste(w))
-          )
-        }, error = function(e) {
-          error_text = gsub("\n", "", paste(e))
-        }
+	          suppressMessages(
+	            list(df = confint(my_model, level = 0.95))
+	          )
+	        }, warning = function(w) {
+	          suppressWarnings(
+	            list(df = confint(my_model, level = 0.95), warning = paste(w))
+	          )
+	        }, error = function(e) {
+	          error_text = gsub("\n", "", paste(e))
+	        }
         )
         
-        # if(class(confint_dt) == "character"){
-        #   output_list["CI_Warn"] = confint_dt
-        #   
-        # } else {
+
         if("df" %in% names(confint_list)){
           output_list["Lower_CI"] = confint_list$df[coefficient_name, "2.5 %"]
           output_list["Upper_CI"] = confint_list$df[coefficient_name, "97.5 %"]
@@ -549,7 +544,9 @@ regression = function(
         summary_columns = colnames(coef_mtrx)
         pValue_column = summary_columns[grepl("Pr(>|t|)", summary_columns, fixed = T) |
                                           grepl("Pr(>|z|)", summary_columns, fixed = T)]
-        output_list["pValue"] = coef_mtrx[coef_index, pValue_column]
+        output_list["Model_LRT_PValue"] = summary(my_model)$logtest['pvalue']
+        
+        output_list["Coef_Wald_PValue"] = coef_mtrx[coef_index, pValue_column]
         output_list["Coef"] = coef_mtrx[coef_index, "coef"] %>% as.numeric
         
         output_list["Events"] =  paste0(my_model$nevent)# events:non-events
@@ -564,7 +561,7 @@ regression = function(
         return(output_list)
       }), use.names = T, fill = T)
     } else{
-      output_dt = data.table(pValue=NA, Coef=NA, N=paste0("0:", my_model$n), Hazard_Ratio=NA, HR_Lower_CI=NA, HR_Upper_CI=NA)
+      output_dt = data.table(Model_LRT_PValue = NA, Coef_Wald_PValue=NA, Coef=NA, N=paste0("0:", my_model$n), Hazard_Ratio=NA, HR_Lower_CI=NA, HR_Upper_CI=NA)
     }
     return(output_dt)
   }
@@ -814,7 +811,8 @@ regression = function(
           			Warning = try_model$warn,
           			Error_Msg = try_model$error_msg,
           			Warning_Msg = try_model$warn_msg,
-          			Complete_Model = TRUE
+          			# complete model because it's on the prediction clm
+          			Complete_Model = TRUE 
           		)
           		
           		if ( is_coxph ){
@@ -839,7 +837,8 @@ regression = function(
           			Warning = try_model$warn,
           			Error_Msg = try_model$error_msg,
           			Warning_Msg = try_model$warn_msg,
-          			Complete_Model = TRUE
+          			# complete model because it's on the prediction clm
+          			Complete_Model = TRUE 
           		)
           	}
             my_dt$Complete_Model = FALSE # need a way to indicate that the reported pvalue only represent some on the coefficients
@@ -908,7 +907,7 @@ regression = function(
                   Full_LogLik = logLik_full,
                   Reduced_LogLik = logLik_red,
                   Delta_LogLik = logLik_full - logLik_red,
-                  pValue = pval,
+                  Model_LRT_PValue = pval,
                   N = nrow(model_dt),
                   Full_Model = full_model_str,
                   Reduced_Model = reduced_model_str,
@@ -941,17 +940,17 @@ regression = function(
     }
   }
   
-  if(fdr_method %in% p.adjust.methods[p.adjust.methods != "none"]){
-    a("FDR correcting regression pValues.")
-    
-    pvalue_dt = calc_fdr(  
-      my_dt = pvalue_dt,
-      fdr_by_columns = fdr_by_columns,
-      fdr_method = fdr_method,
-      fdr_on_columns = "pValue",
-      readme_path = readme_path
-    )
-  }
+  # if(fdr_method %in% p.adjust.methods[p.adjust.methods != "none"]){
+  #   a("FDR correcting regression pValues.")
+  #   
+  #   pvalue_dt = calc_fdr(  
+  #     my_dt = pvalue_dt,
+  #     fdr_by_columns = fdr_by_columns,
+  #     fdr_method = fdr_method,
+  #     fdr_on_columns = "pValue",
+  #     readme_path = readme_path
+  #   )
+  # }
   
   pvalue_dt = decode_clms(pvalue_dt, skip_clms = "String")
   
@@ -959,16 +958,16 @@ regression = function(
   
   if(nrow(comp_dt) > 0){
   	comp_dt = decode_clms(comp_dt)
-    if(fdr_method %in% p.adjust.methods[p.adjust.methods != "none"]){
-      a("FDR correcting model comparisons.")
-      comp_dt = calc_fdr(  
-        my_dt = comp_dt,
-        fdr_by_columns = fdr_by_columns_for_model_comp,
-        fdr_method = fdr_method,
-        fdr_on_columns = "pValue",
-        readme_path = readme_path
-      )
-    }
+    # if(fdr_method %in% p.adjust.methods[p.adjust.methods != "none"]){
+    #   a("FDR correcting model comparisons.")
+    #   comp_dt = calc_fdr(  
+    #     my_dt = comp_dt,
+    #     fdr_by_columns = fdr_by_columns_for_model_comp,
+    #     fdr_method = fdr_method,
+    #     fdr_on_columns = "pValue",
+    #     readme_path = readme_path
+    #   )
+    # }
     
     if(write_files) {
 
