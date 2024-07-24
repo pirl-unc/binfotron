@@ -24,7 +24,9 @@ differential_expression(
   output_dir = NULL,
   patient_key_col = NULL,
   p_adjust_method = "BH",
-  sample_key_col = "Run_ID"
+  sample_key_col = "Run_ID",
+  up_suffix = "__Up",
+  down_suffix = "__Down"
 )
 }
 \arguments{
@@ -72,6 +74,10 @@ used to determine genes to be removed as below low_gene_count_cutoff. Defaults t
 \item{p_adjust_method}{String method name to pass to \code{\link{stats::p.adjust}} for FDR correction}
 
 \item{sample_key_col}{String matching the name of the column that should be used to identify the unique sample identifiers.}
+
+\item{up_suffix}{String to append to the end of 'Up' signatures}
+
+\item{down_suffix}{String to append to the end of 'Down' signatures}
 }
 \value{
 List containing several outputs contains:

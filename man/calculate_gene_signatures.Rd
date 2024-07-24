@@ -10,9 +10,9 @@ calculate_gene_signatures(
   gene_element = 1,
   gmt_file_path,
   min_genes = 1,
-  my_fun = median,
+  my_fun = mean,
   my_summary =
-    "Gene signatures by default are the median of the genes listed in the signature for each sample.",
+    "Gene signatures by default are the mean of the genes listed in the signature for each sample.",
   only_return_signatures = TRUE,
   summary_output_path = NULL,
   sample_key = get_default_sample_key(),

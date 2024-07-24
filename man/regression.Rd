@@ -18,11 +18,12 @@ regression(
   model_comparison_list = NULL,
   model_function = function(dep_var = "", indep_vars = "NULL") {
      paste0("glm(",
-    dep_var, " ~ ", paste0(indep_vars, collapse = " + "), ", data = model_dt)")
+    dep_var, " ~ ", paste0("`", indep_vars, "`", collapse = " + "),
+    ", data = model_dt)")
  },
   my_grouping = NULL,
   output_dir = ".",
-  sample_clm = "Run_ID",
+  sample_clm = get_default_sample_key(),
   save_models = FALSE,
   time_clm = "OS_d",
   write_files = TRUE,

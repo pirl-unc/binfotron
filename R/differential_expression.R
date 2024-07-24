@@ -68,7 +68,9 @@
 #' @param patient_key_col String matching the name of the column that should be used to identify the unique patients. If included, pairwise sample comparison will be performed.
 #' @param p_adjust_method String method name to pass to \code{\link{stats::p.adjust}} for FDR correction
 #' @param sample_key_col String matching the name of the column that should be used to identify the unique sample identifiers.
-
+#' @param up_suffix String to append to the end of 'Up' signatures
+#' @param down_suffix String to append to the end of 'Down' signatures
+#' 
 #'
 #' @return List containing several outputs contains:
 #' \enumerate{
@@ -123,7 +125,9 @@ differential_expression = function(
   output_dir = NULL,
   patient_key_col = NULL,
   p_adjust_method = "BH",
-  sample_key_col = "Run_ID"
+  sample_key_col = "Run_ID",
+  up_suffix = "__Up",
+  down_suffix = "__Down"
 ) {
 
   if(my_grouping %>% is.null || my_grouping %ni% colnames(my_dt) || my_dt[[my_grouping]] %>% unique() %>% length() < 2 ){
@@ -325,7 +329,7 @@ differential_expression = function(
     # add DeSeq
     deseq2_coef = coef(dds)
     deseq2_coef = deseq2_coef[,c(1,ncol(deseq2_coef))]
-    colnames(deseq2_coef) = c("Deseq2_Intercept", "DeSeq2_Coef")
+    colnames(deseq2_coef) = c("DESeq2_Intercept", "DESeq2_Coef")
     deseq2_coef = data.frame(Gene_Combined_Name = rownames(deseq2_coef), deseq2_coef)
     rownames(deseq2_coef) = NULL
     output_stats = merge(output_stats, deseq2_coef, by = "Gene_Combined_Name")
@@ -374,7 +378,7 @@ differential_expression = function(
             down_genes = names(fold_by_names[fold_by_names < (gmt_file_log2fc_cutoff*-1)])
             
             if(length(up_genes) > 0){
-              gene_set_name = paste0(full_gene_set_base_name, "__up")
+              gene_set_name = paste0(full_gene_set_base_name, up_suffix)
               if(is_id){
                 id_gmt_file_output = c(id_gmt_file_output, paste0(c(gene_set_name, gmt_ref, paste0(up_genes, collapse = "\t")), collapse = "\t"))
               } else {
@@ -382,7 +386,7 @@ differential_expression = function(
               }
             }
             if(length(down_genes) > 0){
-              gene_set_name = paste0(full_gene_set_base_name, "__down")
+              gene_set_name = paste0(full_gene_set_base_name, down_suffix)
               if(is_id){
                 id_gmt_file_output = c(id_gmt_file_output, paste0(c(gene_set_name, gmt_ref, paste0(down_genes, collapse = "\t")), collapse = "\t"))
               } else {

@@ -610,8 +610,8 @@ calculate_gene_signatures = function(
   gene_element = 1,
   gmt_file_path,
   min_genes = 1,
-  my_fun = median,
-  my_summary = "Gene signatures by default are the median of the genes listed in the signature for each sample.",
+  my_fun = mean,
+  my_summary = "Gene signatures by default are the mean of the genes listed in the signature for each sample.",
   only_return_signatures = TRUE,  # as opposed to the other_data_columns (ie non gene columns)
   summary_output_path = NULL,
   sample_key = get_default_sample_key(),
@@ -758,42 +758,63 @@ calculate_gene_signatures = function(
 #' @param my_dt Input data.table or data.frame
 #' @param my_summary String to describe is doing
 #' @param readme_path Path to output readme text to.
+#' @param transpose_for_faster_processing Boolean to indicate if you'd like to transpose for potentially faster processing. In a test of a data.frame with 10000 columns and 24 rows where ~75% of values are NA, runtimes were: untransposed: 176 seconds; transposed and transposed back: .05 seconds.  A downside to using this would be if you have different classes in your columns, in which case you could lose formatting or precision.
 #'
 #' @return my_dt with zereos in place of NA's
 #'  
 #' @export
 convert_na_to_zeroes = function(
-  my_dt,
-  my_summary = "Convert NA to zeroes.",
-  readme_path = NULL
+		my_dt,
+		my_summary = "Convert NA to zeroes.",
+		readme_path = NULL,
+		transpose_for_faster_processing = F
 ) {
-  
-  assert_data_frame(my_dt)
-  
-  function_name = "convert_na_to_zeroes"
-  previous_comments = attributes(my_dt)$comments
-  text_output = make_intro_text(function_name, my_summary)
-  
-  start_time = proc.time()[3] #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  converted_dt = FALSE
-  if(!is.data.table(my_dt)){
-    converted_dt = TRUE
-    my_dt = as.data.table(my_dt)
-  }
-  
-  for (i in names(my_dt))
-    my_dt[is.na(get(i)), (i):=0]
-
-  if (converted_dt) my_dt %>% as.data.frame()
-  
-  announce_total_time(function_name, start_time)
-  
-  if(is.null(readme_path)){
-    attributes(my_dt)$comments = c(previous_comments, text_output, "")
-  } else {
-    write(text_output, readme_path, append = TRUE)
-  }
-  
-  return(my_dt)
+	
+	assert_data_frame(my_dt)
+	
+	function_name = "convert_na_to_zeroes"
+	previous_comments = attributes(my_dt)$comments
+	text_output = make_intro_text(function_name, my_summary)
+	
+	start_time = proc.time()[3] #' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	converted_dt = FALSE
+	if(!is.data.table(my_dt)){
+		converted_dt = TRUE
+		my_dt = as.data.table(my_dt)
+	}
+	
+	if( transpose_for_faster_processing ){
+		column_classes <- sapply(my_dt, class)
+		
+		# Warn if all classes aren't the same.
+		if (length(unique(column_classes)) > 1) {
+			warning("Not all columns are of the same class. transpose_for_faster_processing may cause issues.")
+		}
+		
+		clm_names = names(my_dt)
+		my_dt %<>% t %>% data.table
+	}
+	
+	for (i in names(my_dt))
+		my_dt[is.na(get(i)), (i):=0]
+	
+	if( transpose_for_faster_processing ){
+		my_dt %<>% t %>% data.table
+		names(my_dt) = clm_names
+	}
+	
+	if (converted_dt) my_dt %>% as.data.frame()
+	
+	announce_total_time(function_name, start_time)
+	
+	if(is.null(readme_path)){
+		attributes(my_dt)$comments = c(previous_comments, text_output, "")
+	} else {
+		write(text_output, readme_path, append = TRUE)
+	}
+	
+	return(my_dt)
 }
+
+

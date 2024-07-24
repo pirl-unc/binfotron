@@ -321,28 +321,50 @@ pvalue_stars = function(
 #' 
 #' @description Method to determine significance level bin and return a formatted string. Duplicate of binfotron::pvalue_stars but returns values like '<= 0.01'  rather than '**'
 #' 
-#' 
 #' @param p.value double representing the p.value to obtain significance level for
-#' @param barely_sig double of value for barely significant level
-#' @param decent_sig double of value for reasonably significant level
-#' @param whoa_nelly double of value for very significant level
+#' @param sig_levels vector of PValues to define our bin levels
 #' 
 #' @return Returns string representing the significance bin of this p.value
 #' 
 #' @export
 #' 
-pvalue_nums <- function(p.value, additional_sig = NA, barely_sig = 0.05, decent_sig = 0.01, whoa_nelly = 0.001){
-	if (p.value <= whoa_nelly) {
-		return(paste("<=",whoa_nelly))
-	} else if (p.value <= decent_sig) {
-		return(paste("<=", decent_sig))
-	} else if (p.value <= barely_sig) {
-		return(paste("<=", barely_sig))
-	} else if ( !is.na(additional_sig) && p.value <= additional_sig){
-		return(paste("<=", additional_sig))
-	} else {
-		return(paste(">", barely_sig))
+pvalue_nums = function(pvalues, sig_levels = c(0.05, 0.01, 0.001)) {
+	# Validate and prepare significance levels
+	sig_levels = sort(sig_levels)
+	sig_levels = as.numeric(sig_levels)
+	sig_levels = sig_levels[!is.na(sig_levels)]
+	sig_levels = unique(sig_levels)
+	sig_levels = sig_levels[sig_levels <= 1]
+	
+	if (length(sig_levels) == 0) {
+		stop("sig_levels must contain valid P-values (i.e., positive numbers less than or equal to 1).")
 	}
+	
+	# Initialize the result vector
+	results = character(length(pvalues))
+	
+	# Check each p-value against the significance levels and validity
+	for (i in seq_along(pvalues)) {
+		pvalue = pvalues[i]
+		
+		# Check for invalid p-values
+		if (is.na(pvalue) || pvalue > 1 || pvalue < 0) {
+			results[i] = 'NA'
+		} else {
+			matched = FALSE
+			for (sig_level in sig_levels) {
+				if (pvalue <= sig_level) {
+					results[i] = paste("<=", sig_level)
+					matched = TRUE
+					break # Stop checking once the first matching level is found
+				}
+			}
+			if (!matched) {
+				results[i] = paste(">", max(sig_levels))
+			}
+		}
+	}
+	return(results)
 }
 
 

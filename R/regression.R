@@ -120,11 +120,11 @@ regression = function(
   model_comparison_list = NULL,
   #put warning not to add glm family. we will handle that based on the dependant variable
   model_function = function(dep_var = "", indep_vars = "NULL"){ # for glm
-    paste0("glm(", dep_var, " ~ ",  paste0(indep_vars, collapse = " + "), ", data = model_dt)")    
+  	paste0("glm(", dep_var, " ~ ", paste0("`", indep_vars, "`", collapse = " + "), ", data = model_dt)")   
   },
   my_grouping = NULL, # "Tissue"
   output_dir = ".",
-  sample_clm = "Run_ID",
+  sample_clm = get_default_sample_key(),
   save_models = FALSE,
   time_clm = "OS_d",
   write_files = TRUE,
@@ -220,8 +220,7 @@ regression = function(
     if (any(input_dt[[event_clm]] %ni% 0:1)) {
       stop(paste0("coxph event_clm, ", event_clm, ", can only have values 1 and 0."))
     }
-  }
-  else if (grepl("glm", model_function())) {
+  } else if (grepl("glm", model_function())) {
     a("## Running glm regression")
     is_coxph = FALSE
     missing_dep = dep_vars[dep_vars %ni% names(input_dt)]
@@ -354,8 +353,9 @@ regression = function(
   get_glm_stats = function(my_model) {
     coef_mtrx = summary(my_model)$coefficients
     output_dt = rbindlist(lapply(2:nrow(coef_mtrx), function(coef_index) {
+    	# coef_index = 1
       output_list = list()
-      # summary$my_model can be diefferent than my_model$coefficients as the former gets rid of coef with NA values
+      # summary$my_model can be different than my_model$coefficients as the former gets rid of coef with NA values
       coefficient_name = row.names(coef_mtrx)[coef_index] 
       output_list["Coefficient_Name"] = coefficient_name
       summary_columns = colnames(coef_mtrx)
@@ -499,6 +499,7 @@ regression = function(
         
         output_list["HR_Lower_CI"] = summary(my_model,conf.int=0.95)$conf.int[coef_index, 3] %>% as.numeric
         output_list["HR_Upper_CI"] = summary(my_model,conf.int=0.95)$conf.int[coef_index, 4] %>% as.numeric
+        output_list["HR_SE"] = summary(my_model)$coefficients[coef_index, "se(coef)"] %>% as.numeric
         
         return(output_list)
       }), use.names = T, fill = T)
@@ -582,6 +583,7 @@ regression = function(
   predictions_dt = data.table()
   show_group_in_model_warning = TRUE
   for (group_index in 1:length(my_groups)) {
+  	# group_index = 1
     my_group = my_groups[group_index]
     this_groups_model_comparison_list = list()
     # 0 will be all groups
@@ -608,6 +610,7 @@ regression = function(
     }
     a(paste0("- Group: ", my_group, " ------------"))
     for (dep_index in 1:length(dep_vars)) {
+    	# dep_index = 1
       dep_var = dep_vars[dep_index]
       a(paste0("  - Dependent variable: ", dep_var))
       if (is_coxph) {
@@ -633,6 +636,7 @@ regression = function(
         }
       }
       for (indep_index in 1:length(indep_list)) {
+      	# indep_index = 1
         model_dt = dep_var_dat[
         	complete.cases(
         		dep_var_dat[, unique(c(indep_list[[indep_index]], unlist(this_groups_model_comparison_list))), with = FALSE]
@@ -684,8 +688,7 @@ regression = function(
           my_model = try_model$return_value
           if (include_dep_var_in_prediction_name) {
             model_name = paste0(my_group, "__", dep_var, "_vs_", my_indep_name)
-          }
-          else {
+          } else {
             model_name = paste0(my_group, "__", my_indep_name)
           }
           model_name %<>% gsub(" ", "_", .)
@@ -866,6 +869,8 @@ regression = function(
     }
   }
 
+  pvalue_dt$Coefficient_Name = gsub("`", "", pvalue_dt$Coefficient_Name)
+  
   pvalue_dt = decode_clms(pvalue_dt, skip_clms = "String")
   
   if(write_files) fwrite(pvalue_dt, stats_path, quote = FALSE, sep = "\t", col.names = TRUE, na = "NA")

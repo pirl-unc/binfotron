@@ -7,7 +7,8 @@
 convert_na_to_zeroes(
   my_dt,
   my_summary = "Convert NA to zeroes.",
-  readme_path = NULL
+  readme_path = NULL,
+  transpose_for_faster_processing = F
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ convert_na_to_zeroes(
 \item{my_summary}{String to describe is doing}
 
 \item{readme_path}{Path to output readme text to.}
+
+\item{transpose_for_faster_processing}{Boolean to indicate if you'd like to transpose for potentially faster processing. In a test of a data.frame with 10000 columns and 24 rows where ~75% of values are NA, runtimes were: untransposed: 176 seconds; transposed and transposed back: .05 seconds.  A downside to using this would be if you have different classes in your columns, in which case you could lose formatting or precision.}
 }
 \value{
 my_dt with zereos in place of NA's

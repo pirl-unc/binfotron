@@ -4,22 +4,12 @@
 \alias{pvalue_nums}
 \title{Return string indicating significance level bin of p.value provided}
 \usage{
-pvalue_nums(
-  p.value,
-  additional_sig = NA,
-  barely_sig = 0.05,
-  decent_sig = 0.01,
-  whoa_nelly = 0.001
-)
+pvalue_nums(pvalues, sig_levels = c(0.05, 0.01, 0.001))
 }
 \arguments{
+\item{sig_levels}{vector of PValues to define our bin levels}
+
 \item{p.value}{double representing the p.value to obtain significance level for}
-
-\item{barely_sig}{double of value for barely significant level}
-
-\item{decent_sig}{double of value for reasonably significant level}
-
-\item{whoa_nelly}{double of value for very significant level}
 }
 \value{
 Returns string representing the significance bin of this p.value
