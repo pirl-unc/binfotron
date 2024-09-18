@@ -83,7 +83,7 @@ plot_error_volcano = function(
 	}
 	
 	label_df = plot_df
-	if (sum(plot_df[[label_clm]] == "") > max_labels){
+	if (sum(plot_df[[label_clm]] != "") > max_labels){
 		label_df = plot_df[order(plot_df[[axis_clm_y]], decreasing = T),]
 		label_df = label_df[1:max_labels, ]
 	}
