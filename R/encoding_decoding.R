@@ -19,6 +19,7 @@
 encode_special_char = function(char_vector) {
 	sapply(char_vector, function(name) {
 		encoded_name = ""
+		name = gsub(" ", "_", name)
 		for (char in strsplit(name, '')[[1]]) {
 			if (grepl("[a-zA-Z0-9_]", char)) {
 				encoded_name = paste0(encoded_name, char)
@@ -54,6 +55,7 @@ decode_special_char = function(char_vector) {
 			  name = sub(my_match, char, name, fixed = TRUE)
 			}
 		}
+	  name = gsub("_", " ", name)
 		return(name)
 	})
 }
